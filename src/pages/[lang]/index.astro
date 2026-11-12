@@ -1,0 +1,232 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getImage } from 'astro:assets';
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.tsx';
+import Hero from '../../components/Hero.tsx';
+import HeroActions from '../../components/HeroActions.tsx';
+import Experience from '../../components/Experience.tsx';
+import Projects from '../../components/Projects.tsx';
+import About from '../../components/About.tsx';
+import Contact from '../../components/Contact.tsx';
+import CompactIdentity from '../../components/CompactIdentity.tsx';
+import BackgroundPlasma from '../../components/reactbits/BackgroundPlasma.tsx';
+import EdgeBlur from '../../components/reactbits/EdgeBlur.tsx';
+import FeaturedExpand from '../../components/reactbits/FeaturedExpand.tsx';
+import portadaMiCuadre from '../../assets/proyectos/mi-cuadre-portada.webp';
+import portadaMiCuadreMovil from '../../assets/proyectos/mi-cuadre-portada-movil.webp';
+import DecryptedText from '../../components/reactbits/DecryptedText.tsx';
+import AboutCard from '../../components/reactbits/AboutCard.tsx';
+import { locales, useTranslations, otherLocale, htmlLang, type Locale } from '../../i18n/ui';
+import { profile, projects } from '../../data/profile';
+
+export const getStaticPaths = (() => locales.map((lang) => ({ params: { lang } }))) satisfies GetStaticPaths;
+
+const locale = Astro.params.lang as Locale;
+const t = useTranslations(locale);
+const alt = otherLocale(locale);
+
+// Avatar a 1x/2x/3x de 88 px (pantallas retina incluidas).
+const sizes = [88, 176, 264];
+const variants = await Promise.all(sizes.map((width) => getImage({ src: profile.photo, width, format: 'webp' })));
+const avatar = {
+  src: variants[1].src,
+  srcSet: variants.map((v, i) => `${v.src} ${sizes[i]}w`).join(', '),
+};
+
+// Íconos reales de proyectos (60 px a 1x/2x/3x).
+const iconSizes = [60, 120, 180];
+const projectIcons = Object.fromEntries(
+  await Promise.all(
+    projects
+      .filter((p) => p.image)
+      .map(async (p) => {
+        const v = await Promise.all(iconSizes.map((width) => getImage({ src: p.image!, width, format: 'webp' })));
+        return [p.slug, { src: v[1].src, srcSet: v.map((x, i) => `${x.src} ${iconSizes[i]}w`).join(', ') }] as const;
+      }),
+  ),
+);
+
+// Tarjeta holográfica: foto recortada (fondo transparente) en WebP.
+const [cardPhoto, cardMini] = await Promise.all([
+  getImage({ src: profile.photo, width: 680, format: 'webp' }),
+  getImage({ src: profile.photo, width: 96, format: 'webp' }),
+]);
+
+// Proyecto destacado (ScrollExpand): portada a pantalla completa, horizontal y vertical.
+const featured = projects.find((p) => p.slug === 'mi-cuadre')!;
+const featuredIcon = projectIcons[featured.slug];
+const [portada, portadaMovil] = await Promise.all([
+  getImage({ src: portadaMiCuadre, width: 2400, format: 'webp', quality: 80 }),
+  getImage({ src: portadaMiCuadreMovil, width: 1440, format: 'webp', quality: 80 }),
+]);
+
+const sections = [
+  { id: 'experiencia', label: t('nav.experience') },
+  { id: 'proyectos', label: t('nav.projects') },
+  { id: 'sobre-mi', label: t('nav.about') },
+  { id: 'contacto', label: t('nav.contact') },
+];
+---
+
+<Layout locale={locale} title={`${profile.name} — ${profile.role[locale]}`} description={profile.seo.description[locale]}>
+  <a
+    href="#contenido"
+    class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-full focus:bg-primary focus:px-5 focus:py-3 focus:text-white"
+  >
+    {t('skipToContent')}
+  </a>
+
+  <div class="scroll-progress" aria-hidden="true"></div>
+  <CompactIdentity name={profile.name} shortName={profile.firstName} avatar={avatar} />
+
+  <Header
+    client:idle
+    navLabel={t('nav.label')}
+    items={sections}
+    lang={{ href: `/${alt}/`, hreflang: htmlLang[alt], short: t('lang.short'), label: t('lang.switch') }}
+    theme={{ label: t('theme.label'), system: t('theme.system'), light: t('theme.light'), dark: t('theme.dark') }}
+  />
+
+  <!-- Fondo PlasmaWave (React Bits), fijo: queda siempre a la vista mientras el contenido pasa por encima. -->
+  <div class="plasma-bg pointer-events-none fixed inset-0 z-0" aria-hidden="true">
+    <BackgroundPlasma client:only="react" />
+  </div>
+  <!-- Desenfoque progresivo en los bordes de la pantalla (GradualBlur de React Bits). -->
+  <EdgeBlur client:idle />
+
+  <!-- overflow-x-clip: el giro 3D de las secciones al hacer scroll (perspectiva) y el resplandor de
+       StarBorder (48 px fuera del botón) sobresalen por los lados y causaban scroll horizontal en móvil.
+       `clip` no crea contenedor de scroll: el sticky del proyecto destacado sigue funcionando. -->
+  <main id="contenido" tabindex="-1" class="relative overflow-x-clip pb-32 outline-none md:pb-24">
+    <div class="mx-auto max-w-3xl">
+      <section class="hero-collapse relative pt-20 pb-16 md:pt-40 md:pb-28" aria-labelledby="hero-title">
+        <div class="relative z-[1]">
+          <Hero locale={locale} t={t} avatar={avatar}>
+            <DecryptedText
+              slot="name"
+              client:load
+              text={profile.firstName}
+              animateOn="view"
+              sequential
+              revealDirection="start"
+              speed={45}
+              maxIterations={14}
+              characters="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789<>/{}#$"
+              className="text-primary"
+              encryptedClassName="text-primary/45"
+            />
+            <HeroActions
+              slot="actions"
+              client:idle
+              labels={{ nav: t('hero.social'), contact: t('hero.contact'), external: t('common.external') }}
+              email={profile.email}
+              linkedin={profile.socials.linkedin}
+              github={profile.socials.github}
+            />
+          </Hero>
+        </div>
+      </section>
+
+      <section id="experiencia" aria-labelledby="experiencia-title" data-reveal><Experience locale={locale} t={t} /></section>
+    </div>
+
+    <!-- Proyecto destacado a todo el ancho (ScrollExpand). Alto reservado = escena fijada
+         (1 pantalla + 1,1 de expansión + 0,35 de pausa) para que la página no salte al hidratar. -->
+    <section id="destacado" aria-labelledby="destacado-title" class="relative mt-20 h-[245svh] motion-reduce:h-auto md:mt-24">
+      <FeaturedExpand
+        client:visible={{ rootMargin: '150%' }}
+        src={portada.src}
+        srcPortrait={portadaMovil.src}
+        alt={t('featured.alt')}
+        title={featured.title}
+        hint={t('featured.hint')}
+      >
+        <!-- Degradado propio bajo el texto, legible sea cual sea la imagen. En horizontal el texto va a la
+             izquierda (los teléfonos de la portada están a la derecha); en vertical, debajo. -->
+        <div
+          class="pointer-events-none absolute portrait:inset-x-0 portrait:bottom-0 portrait:h-[64%] portrait:bg-[linear-gradient(to_top,rgba(0,0,0,0.9),rgba(0,0,0,0.62)_48%,transparent)] landscape:inset-y-0 landscape:left-0 landscape:w-[62%] landscape:bg-[linear-gradient(to_right,rgba(0,0,0,0.8),rgba(0,0,0,0.5)_55%,transparent)]"
+          aria-hidden="true"
+        ></div>
+        <!-- En vertical, por encima de la barra de pestañas y del desenfoque del borde inferior. -->
+        <div
+          class="absolute flex flex-col gap-4 text-white portrait:inset-x-0 portrait:bottom-[max(9%,7.5rem)] portrait:mx-auto portrait:max-w-2xl portrait:items-center portrait:px-6 portrait:text-center landscape:top-1/2 landscape:left-[6%] landscape:w-[min(42%,34rem)] landscape:-translate-y-1/2 landscape:items-start landscape:text-left"
+        >
+          <div class="flex items-center gap-3 text-left">
+            {featuredIcon && (
+              <img src={featuredIcon.src} srcset={featuredIcon.srcSet} sizes="44px" width="44" height="44" alt="" class="size-11 rounded-[10px]" />
+            )}
+            <div>
+              <h2 id="destacado-title" class="text-[22px] font-semibold leading-tight tracking-[-0.01em]">{featured.title}</h2>
+              <p class="text-[13px] text-white/70">{featured.kind[locale]}</p>
+            </div>
+          </div>
+          <p class="text-[17px] leading-snug text-white/90 portrait:text-balance landscape:text-pretty md:text-[21px] [@media(max-height:480px)]:hidden">{featured.summary[locale]}</p>
+          <p class="text-[13px] tracking-wide text-white/70">{featured.stack.join(' · ')}</p>
+          <div class="mt-2 flex flex-wrap gap-3 portrait:justify-center">
+            {featured.links.live && (
+              <a href={featured.links.live} target="_blank" rel="noopener noreferrer" class="press rounded-full bg-primary px-6 py-3 text-[15px] font-semibold text-white">
+                {t('featured.open')}<span class="sr-only"> {t('common.external')}</span>
+              </a>
+            )}
+            {featured.links.repo && (
+              <a href={featured.links.repo} target="_blank" rel="noopener noreferrer" class="press rounded-full bg-white/15 px-6 py-3 text-[15px] font-semibold text-white backdrop-blur-md">
+                {t('projects.code')}<span class="sr-only"> {t('common.external')}</span>
+              </a>
+            )}
+          </div>
+        </div>
+      </FeaturedExpand>
+    </section>
+    <!-- Sin JavaScript la escena no puede montarse: se oculta el hueco (Mi Cuadre sigue en Proyectos). -->
+    <noscript><style is:inline>#destacado { display: none; }</style></noscript>
+
+    <div class="mx-auto mt-20 max-w-3xl space-y-20 md:mt-24 md:space-y-24">
+      <section id="proyectos" aria-labelledby="proyectos-title" data-reveal><Projects locale={locale} t={t} icons={projectIcons} /></section>
+      <section id="sobre-mi" aria-labelledby="sobre-mi-title" data-reveal><About locale={locale} t={t}>
+          <!-- Espacio reservado con la proporción real de la tarjeta (alto = 1,444 × ancho): sin saltos al cargar. -->
+          <div slot="card" class="aspect-[340/491] w-[340px] max-w-full">
+            <AboutCard
+              client:only="react"
+              avatarUrl={cardPhoto.src}
+              miniAvatarUrl={cardMini.src}
+              name={profile.name}
+              title={profile.role[locale]}
+              handle="MarlonGarzonT"
+              status={t('about.status')}
+              contactText={t('contact.email')}
+              email={profile.email}
+            />
+          </div>
+        </About></section>
+      <section id="contacto" aria-labelledby="contacto-title" data-reveal><Contact t={t} /></section>
+    </div>
+
+    <footer class="mx-auto mt-20 max-w-3xl px-4 border-t border-black/10 pt-6 text-[13px] text-black/50 dark:border-white/10 dark:text-white/50">
+      © {new Date().getFullYear()} {profile.name} · {t('footer.made')}
+    </footer>
+  </main>
+
+  <script>
+    // Respaldo para navegadores sin animaciones ligadas al scroll (view timelines): revelado de
+    // secciones una vez al entrar en pantalla. Donde hay soporte, la profundidad la hace el CSS.
+    // Sin JS o con movimiento reducido, todo se ve desde el principio.
+    const sections = document.querySelectorAll<HTMLElement>('[data-reveal]');
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const scrollTimelines = CSS.supports('animation-timeline: view()');
+    if (!reduce && !scrollTimelines && 'IntersectionObserver' in window) {
+      document.documentElement.classList.add('reveal-ready');
+      const observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (!entry.isIntersecting) continue;
+            entry.target.setAttribute('data-visible', '');
+            observer.unobserve(entry.target);
+          }
+        },
+        { rootMargin: '0px 0px -12% 0px' },
+      );
+      sections.forEach((s) => observer.observe(s));
+    }
+  </script>
+</Layout>
