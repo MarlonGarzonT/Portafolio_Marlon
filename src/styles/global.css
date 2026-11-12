@@ -1,0 +1,294 @@
+@import "tailwindcss";
+@import "konsta/react/theme.css";
+/* Inter: respaldo para Windows/Android. En dispositivos Apple gana SF Pro del sistema y Inter no se descarga. */
+@import "@fontsource-variable/inter";
+
+@theme {
+  /* Fuente de iOS de Konsta + Inter antes de system-ui para que Windows no caiga en Segoe UI. */
+  --font-ios: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter Variable", "Inter", system-ui, "Helvetica Neue", Arial, sans-serif;
+
+  /* Colores de sistema de iOS. */
+  --color-ios-green: #34c759;
+  --color-ios-orange: #ff9500;
+  --color-ios-indigo: #5856d6;
+  --color-ios-gray: #8e8e93;
+  --color-linkedin: #0a66c2;
+
+  /* Tracking por tamaño (Apple): el texto grande se aprieta; el de lectura queda en 0. */
+  --tracking-display: -0.022em;
+
+  /* Curva de salida tipo iOS para entradas no interactivas. */
+  --ease-ios: cubic-bezier(0.32, 0.72, 0, 1);
+  /* Ease-out fuerte para revelados (skill animate de Emil). */
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    /* Barra superior fija (escritorio) y barra de pestañas (móvil). */
+    scroll-padding-top: 6rem;
+    -webkit-text-size-adjust: 100%;
+    font-optical-sizing: auto;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+  body {
+    min-height: 100dvh;
+    overflow-x: clip;
+  }
+  ::selection {
+    background: color-mix(in oklab, var(--color-primary) 30%, transparent);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}
+
+/* Konsta recorta el texto de las filas a 2 líneas; en Experiencia y Proyectos se muestra completo. */
+.list-full-text .line-clamp-2 {
+  display: block;
+  overflow: visible;
+  -webkit-line-clamp: unset;
+}
+
+/* Respuesta al pulsar (Apple): la escala cambia en pointer-down, al instante. */
+.press {
+  transition: transform 100ms ease-out;
+}
+.press:active {
+  transform: scale(0.97);
+}
+@media (prefers-reduced-motion: reduce) {
+  .press:active {
+    transform: none;
+  }
+}
+
+/* Material translúcido de la barra: si el usuario pide reducir transparencias, superficie sólida. */
+@media (prefers-reduced-transparency: reduce) {
+  .chrome {
+    background-color: var(--color-ios-light-surface-1) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  .dark .chrome {
+    background-color: var(--color-ios-dark-surface-1) !important;
+  }
+}
+
+/* Entrada del inicio: el contenido "se materializa" (opacidad + desenfoque + leve subida). */
+@keyframes materialize {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+    transform: translateY(10px);
+  }
+}
+.enter {
+  animation: materialize 700ms var(--ease-ios) both;
+  animation-delay: calc(var(--i, 0) * 80ms);
+}
+@media (prefers-reduced-motion: reduce) {
+  .enter {
+    animation: none;
+  }
+}
+
+/* Cambio de tema: fundido suave en vez de un salto brusco de brillo (View Transitions). */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 280ms;
+  animation-timing-function: ease;
+}
+
+/* ============================================================================
+   Animaciones de scroll
+   - Ligadas al scroll (CSS scroll-driven): corren fuera del hilo principal, siguen el dedo 1:1
+     y son reversibles. Curva `linear`: la "easing" la pone el propio scroll.
+   - Navegadores sin soporte (@supports) ven la página estática, sin perder nada.
+   ========================================================================== */
+
+/* 1) Progreso de lectura: línea azul arriba (indicación de estado). */
+.scroll-progress {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 60;
+  height: 2px;
+  background: var(--color-primary);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  pointer-events: none;
+}
+@keyframes scroll-progress {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* 2) Título grande que se pliega (iOS): el inicio se encoge y se desvanece hacia arriba a la izquierda… */
+@keyframes hero-collapse {
+  to {
+    opacity: 0;
+    transform: translateY(-56px) scale(0.92);
+  }
+}
+/* …y la identidad compacta aparece en la cápsula de vidrio. */
+.compact-id {
+  opacity: 0;
+  transform: translateY(-8px) scale(0.96);
+  pointer-events: none;
+}
+@keyframes compact-in {
+  to {
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
+  }
+}
+@keyframes compact-in-fade {
+  to {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+/* Propiedades sueltas a propósito: el minificador fusionaría `animation` + `animation-timeline` en un
+   atajo inválido (animation-timeline no cabe en el atajo) y el navegador descartaría la regla.
+   Sin `animation-duration`: su valor inicial `auto` hace que la animación ocupe todo el rango del scroll. */
+@supports (animation-timeline: scroll()) {
+  .scroll-progress {
+    animation-name: scroll-progress;
+    animation-timing-function: linear;
+    animation-fill-mode: both;
+    animation-timeline: scroll(root);
+  }
+  .compact-id {
+    animation-name: compact-in;
+    animation-timing-function: linear;
+    animation-fill-mode: both;
+    animation-timeline: scroll(root);
+    animation-range: 42vh 62vh;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-collapse {
+      transform-origin: 0 0;
+      animation-name: hero-collapse;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: scroll(root);
+      animation-range: 0 62vh;
+    }
+  }
+  /* Movimiento reducido: la identidad solo aparece con opacidad, sin desplazarse. */
+  @media (prefers-reduced-motion: reduce) {
+    .compact-id {
+      transform: none;
+      animation-name: compact-in-fade;
+    }
+  }
+}
+
+/* 3) Profundidad ligada al scroll (navegadores con view timelines): cada bloque de sección entra
+   inclinado hacia atrás, algo pequeño y transparente, y se endereza mientras subes la página; al salir
+   por arriba se aleja y se desvanece bajo el desenfoque del borde. Sigue el scroll 1:1, es reversible
+   y corre fuera del hilo principal. Solo transform y opacidad. Propiedades sueltas: ver nota de arriba. */
+@keyframes depth-in {
+  from {
+    opacity: 0;
+    transform: perspective(1200px) translateY(64px) scale(0.92) rotateX(16deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes depth-out {
+  to {
+    opacity: 0.25;
+    transform: perspective(1200px) translateY(-24px) scale(0.94) rotateX(-8deg);
+  }
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    [data-reveal] > * {
+      transform-origin: 50% 100%;
+      animation-name: depth-in, depth-out;
+      animation-timing-function: linear, linear;
+      /* depth-out solo "forwards": antes de su rango no debe pisar la entrada. */
+      animation-fill-mode: both, forwards;
+      animation-timeline: view(), view();
+      animation-range: entry 0% cover 32%, exit 15% exit 100%;
+    }
+  }
+}
+
+/* 3b) Respaldo sin view timelines (p. ej. Firefox): revelado una sola vez con IntersectionObserver.
+   Título → contenido escalonados 60 ms; las filas de cada lista, también. Solo opacidad y transform. */
+.reveal-ready [data-reveal] > *,
+.reveal-ready [data-reveal] li {
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 700ms var(--ease-out-strong),
+    transform 700ms var(--ease-out-strong);
+}
+.reveal-ready [data-reveal] li {
+  transform: translateY(12px);
+}
+.reveal-ready [data-reveal][data-visible] > *,
+.reveal-ready [data-reveal][data-visible] li {
+  opacity: 1;
+  transform: none;
+}
+.reveal-ready [data-reveal][data-visible] > :nth-child(2) { transition-delay: 60ms; }
+.reveal-ready [data-reveal][data-visible] > :nth-child(3) { transition-delay: 120ms; }
+.reveal-ready [data-reveal][data-visible] > :nth-child(n + 4) { transition-delay: 180ms; }
+.reveal-ready [data-reveal][data-visible] li:nth-child(1) { transition-delay: 120ms; }
+.reveal-ready [data-reveal][data-visible] li:nth-child(2) { transition-delay: 180ms; }
+.reveal-ready [data-reveal][data-visible] li:nth-child(3) { transition-delay: 240ms; }
+.reveal-ready [data-reveal][data-visible] li:nth-child(4) { transition-delay: 300ms; }
+.reveal-ready [data-reveal][data-visible] li:nth-child(n + 5) { transition-delay: 360ms; }
+
+/* ============================================================================
+   Efectos de React Bits
+   ========================================================================== */
+
+/* Fondo PlasmaWave fijo. Con transparencias reducidas se atenúa: el material deja de competir con el texto. */
+@media (prefers-reduced-transparency: reduce) {
+  .plasma-bg {
+    opacity: 0.35;
+  }
+}
+
+/* Brillo que recorre el texto (efecto ShinyText de React Bits, en CSS: sin JS y con el
+   color correcto en claro y oscuro desde el primer cuadro). Movimiento constante = linear. */
+.shiny {
+  --shiny-base: #1f7a3a;
+  --shiny-light: #7ee2a0;
+  background: linear-gradient(105deg, var(--shiny-base) 42%, var(--shiny-light) 50%, var(--shiny-base) 58%) 100% 0 / 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shiny 3.2s linear infinite;
+}
+.dark .shiny {
+  --shiny-base: #30d158;
+  --shiny-light: #d6ffe3;
+}
+@keyframes shiny {
+  to {
+    background-position: -150% 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .shiny {
+    animation: none;
+    background: none;
+    color: var(--shiny-base);
+  }
+}

@@ -1,0 +1,18 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { profile } from '../data/profile';
+---
+
+<Layout locale="es" title={`404 — ${profile.name}`} description="Página no encontrada / Page not found" noindex>
+  <main class="grid min-h-dvh place-items-center px-6 text-center">
+    <div>
+      <p class="text-[72px] font-bold leading-none tracking-display text-primary">404</p>
+      <h1 class="mt-4 text-[22px] font-semibold">Esta página no existe.</h1>
+      <p class="mt-1 text-black/60 dark:text-white/60" lang="en">This page doesn’t exist.</p>
+      <div class="mt-8 flex justify-center gap-3">
+        <a href="/es/" class="rounded-full bg-primary px-5 py-2.5 text-[15px] font-semibold text-white">Ir al inicio</a>
+        <a href="/en/" lang="en" class="rounded-full bg-primary/12 px-5 py-2.5 text-[15px] font-semibold text-primary">Go home</a>
+      </div>
+    </div>
+  </main>
+</Layout>
