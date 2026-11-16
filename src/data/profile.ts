@@ -1,56 +1,66 @@
 /**
  * Contenido del portafolio. Todo lo que ves en el sitio sale de aquí.
- *
- * ⚠ La experiencia, los proyectos, el correo y los enlaces son EJEMPLOS de
- *   estructura: reemplázalos por tu información real antes de publicar.
- *   Busca "EDITAR".
+ * Fuente: hoja de vida de Marlon Garzón (noviembre de 2026). El teléfono no se publica a propósito.
  */
+import type { ComponentType, SVGProps } from 'react';
 import type { ImageMetadata } from 'astro';
+import CameraViewfinder from 'framework7-icons/react/esm/CameraViewfinder.js';
+import { DatabaseGlyph } from '../components/ios/glyphs';
 import type { Localized } from '../i18n/ui';
 import type { BrandKey } from '../lib/brands';
 import retrato from '../assets/retrato-marlon.png';
+import fotoPrincipal from '../assets/marlon-avatar.jpg';
 import iconoMiCuadre from '../assets/proyectos/mi-cuadre.png';
 
 export interface Job {
   start: string;
-  /** `null` = trabajo actual. */
+  /** `null` = trabajo actual. Igual a `start` si duró menos de un año (se muestra un solo año). */
   end: string | null;
   company: string;
   role: Localized;
   summary: Localized;
   highlights: Localized<string[]>;
+  /** Tecnologías usadas en ese trabajo. */
+  stack?: string[];
 }
 
 export interface Project {
   slug: string;
-  title: string;
+  title: Localized;
   kind: Localized;
   summary: Localized;
   stack: string[];
-  /** Ícono real de la app (PNG cuadrado). Si no hay, se dibuja uno con `icon` y `tint`. */
+  /** Ícono real de la app (PNG cuadrado). Si no hay, se dibuja uno con `glyph` o `icon` y `tint`. */
   image?: ImageMetadata;
-  /** Logo que va en el "ícono de app" generado. */
-  icon: BrandKey;
+  /** Ícono de sistema (Framework7, estilo SF Symbols) para el ícono generado. Tiene prioridad sobre `icon`. */
+  glyph?: ComponentType<SVGProps<SVGSVGElement>>;
+  /** Logo de tecnología (Simple Icons) para el ícono generado. */
+  icon?: BrandKey;
   /** Degradado del ícono (arriba → abajo), como los íconos de iOS. */
   tint: [string, string];
   links: { live?: string; repo?: string };
+  /** En desarrollo: muestra la etiqueta "En desarrollo" en lugar del botón. */
+  inProgress?: boolean;
 }
 
 export interface SkillGroup {
   title: Localized;
-  items: { name: string; icon?: BrandKey }[];
+  /** `name` traducible para lo que cambia por idioma (p. ej. los idiomas). */
+  items: { name: string | Localized; icon?: BrandKey }[];
 }
 
-// EDITAR: datos personales
 export const profile = {
   name: 'Marlon Garzón',
   firstName: 'Marlon',
+  /** Foto principal (avatar del inicio y de la cápsula de la barra). Original de 200×200 px. */
+  avatar: fotoPrincipal as ImageMetadata,
+  /** Retrato recortado sin fondo: lo necesita la tarjeta holográfica de "Sobre mí". */
   photo: retrato as ImageMetadata,
   available: true,
-  role: { es: 'Desarrollador Full Stack', en: 'Full Stack Developer' } satisfies Localized,
+  role: { es: 'Desarrollador de Software', en: 'Software Developer' } satisfies Localized,
   intro: {
-    es: 'en Colombia. Construyo productos web completos, de la base de datos al último píxel: interfaces rápidas y claras sobre APIs y datos bien modelados.',
-    en: 'based in Colombia. I build complete web products, from the database to the last pixel: fast, clear interfaces on top of well-modeled APIs and data.',
+    es: 'en Bogotá, Colombia. Hoy lidero la automatización de servicio al cliente en AGP, con experiencia previa construyendo soluciones para los sectores financiero y de recursos humanos: integraciones, bases de datos complejas y arquitecturas seguras.',
+    en: 'based in Bogotá, Colombia. I currently lead customer service automation at AGP, with prior experience building solutions for the financial and HR sectors: integrations, complex databases and secure architectures.',
   } satisfies Localized,
   email: 'marlonarley2014@gmail.com',
   socials: {
@@ -59,49 +69,111 @@ export const profile = {
   },
   seo: {
     description: {
-      es: 'Portafolio de Marlon Garzón, desarrollador full stack. Productos web completos con foco en interfaz, rendimiento y APIs sólidas.',
-      en: 'Portfolio of Marlon Garzón, full stack developer. Complete web products focused on interface, performance and solid APIs.',
+      es: 'Portafolio de Marlon Garzón, desarrollador de software en Bogotá. Automatización de procesos y soluciones para los sectores financiero y de recursos humanos.',
+      en: 'Portfolio of Marlon Garzón, software developer in Bogotá. Process automation and solutions for the financial and HR sectors.',
     } satisfies Localized,
   },
 };
 
-// EDITAR: experiencia de ejemplo
 export const experience: Job[] = [
   {
-    start: '2023',
+    start: '2026', // desde el 6 de julio de 2026
     end: null,
-    company: 'Freelance',
-    role: { es: 'Desarrollador Full Stack', en: 'Full Stack Developer' },
+    company: 'AGP',
+    role: { es: 'Desarrollador Junior', en: 'Junior Developer' },
     summary: {
-      es: 'Construyo productos de punta a punta para startups y pymes: descubrimiento, diseño de interfaz, desarrollo y despliegue.',
-      en: 'I build end-to-end products for startups and small businesses: discovery, interface design, development and deployment.',
+      es: 'Automatización de procesos y mantenimiento del software de la compañía.',
+      en: 'Process automation and maintenance of the company’s software.',
     },
     highlights: {
-      es: ['Lancé 6 productos en producción con Next.js y PostgreSQL.', 'Implementé CI/CD y entornos de previsualización por rama.'],
-      en: ['Shipped 6 production products with Next.js and PostgreSQL.', 'Set up CI/CD and per-branch preview environments.'],
+      es: [
+        'Lidero el proyecto de automatización de SAC (Servicio al Cliente).',
+        'Gestiono bases de datos en Azure SQL y programo su lógica en PL/SQL, como triggers.',
+        'Desarrollo con Python y React, usando librerías y componentes.',
+        'Doy mantenimiento al software existente de la compañía.',
+      ],
+      en: [
+        'I lead the Customer Service (SAC) automation project.',
+        'I manage Azure SQL databases and write their logic in PL/SQL, such as triggers.',
+        'I build with Python and React, using libraries and components.',
+        'I maintain the company’s existing software.',
+      ],
     },
+    stack: ['Python', 'React', 'Azure SQL', 'PL/SQL'],
   },
   {
-    start: '2021',
-    end: '2023',
-    company: 'Empresa de software',
-    role: { es: 'Desarrollador Front-end', en: 'Front-end Developer' },
+    start: '2025',
+    end: '2026', // hasta junio de 2026
+    company: 'E.B.S. Enterprise Business Solutions',
+    role: { es: 'Constructor Junior Multiplataforma', en: 'Junior Cross-platform Developer' },
     summary: {
-      es: 'Desarrollo del sistema de diseño y de las aplicaciones web principales del producto.',
-      en: 'Built the design system and the core web applications of the product.',
+      es: 'Desarrollo, modernización y mantenimiento de soluciones multiplataforma para el sector financiero.',
+      en: 'Development, modernization and maintenance of cross-platform solutions for the financial sector.',
     },
     highlights: {
-      es: ['Creé una librería de 40+ componentes accesibles usada por 3 equipos.', 'Reduje el bundle inicial un 45% con code splitting.'],
-      en: ['Built a library of 40+ accessible components used by 3 teams.', 'Cut the initial bundle by 45% with code splitting.'],
+      es: [
+        'Diseñé y documenté el modelo automatizado de evaluación financiera para las solicitudes de crédito de Fundación Coomeva.',
+        'Integré sistemas legados con arquitecturas modernas consumiendo servicios SOAP (XML) y API REST (JSON).',
+        'Implementé flujos de trabajo con IA (Claude) para automatizar la documentación técnica y optimizar procesos internos.',
+      ],
+      en: [
+        'Designed and documented the automated financial assessment model for Fundación Coomeva’s credit applications.',
+        'Integrated legacy systems with modern architectures by consuming SOAP (XML) services and REST (JSON) APIs.',
+        'Built AI workflows (Claude) to automate technical documentation and streamline internal processes.',
+      ],
     },
+    stack: ['Java', 'Node.js', 'Angular', 'TypeScript', 'JavaScript', 'PHP', 'Gupta Team Developer', 'Oracle (PL/SQL)', 'SQL Server', 'Git'],
+  },
+  {
+    start: '2024',
+    end: '2024',
+    company: 'Sodexo',
+    role: { es: 'Practicante de Desarrollo de Software', en: 'Software Development Intern' },
+    summary: {
+      es: 'Proyecto Payroll: sistema de evaluación de desempeño de extremo a extremo para recursos humanos.',
+      en: 'Payroll project: an end-to-end performance review system for human resources.',
+    },
+    highlights: {
+      es: ['Desarrollé el módulo de evaluación full-stack en Velneo V7, que soporta la gestión de recursos humanos de más de 8.000 empleados a nivel nacional.'],
+      en: ['Built the full-stack evaluation module in Velneo V7, supporting HR management for more than 8,000 employees nationwide.'],
+    },
+    stack: ['Velneo V7'],
+  },
+  {
+    start: '2023',
+    end: '2023',
+    company: 'Pinturas La Mansión',
+    role: { es: 'Desarrollador de Software Junior', en: 'Junior Software Developer' },
+    summary: {
+      es: 'Diseño, modernización y mantenimiento de un sistema crítico de facturación empresarial.',
+      en: 'Design, modernization and maintenance of a business-critical billing system.',
+    },
+    highlights: {
+      es: [
+        'Optimicé la gestión operativa y el procesamiento de transacciones.',
+        'Desarrollé arquitecturas CRUD robustas en C# y .NET, con un flujo de datos eficiente y seguro.',
+      ],
+      en: ['Improved operational management and transaction processing.', 'Built robust CRUD architectures in C# and .NET with an efficient, secure data flow.'],
+    },
+    stack: ['C#', '.NET', 'Oracle (PL/SQL)', 'SQL Server'],
+  },
+  {
+    start: '2023',
+    end: '2023',
+    company: 'Pear Solutions',
+    role: { es: 'Técnico de Sistemas', en: 'IT Technician' },
+    summary: {
+      es: 'Mantenimiento preventivo y correctivo y soporte técnico de primer nivel en equipos de hardware y redes.',
+      en: 'Preventive and corrective maintenance and first-level technical support for hardware and networks.',
+    },
+    highlights: { es: [], en: [] },
   },
 ];
 
 export const projects: Project[] = [
-  // Proyecto real
   {
     slug: 'mi-cuadre',
-    title: 'Mi Cuadre',
+    title: { es: 'Mi Cuadre', en: 'Mi Cuadre' },
     kind: { es: 'App de finanzas · PWA', en: 'Finance app · PWA' },
     summary: {
       es: 'Registra ingresos y gastos en segundos, con el balance del mes, gráficos por categoría, historial editable y exportación a Excel. Se instala en el celular como una app nativa.',
@@ -109,108 +181,108 @@ export const projects: Project[] = [
     },
     stack: ['React', 'TypeScript', 'Supabase', 'Konsta UI'],
     image: iconoMiCuadre,
-    icon: 'siReact',
     tint: ['#2c3445', '#181f2b'],
     links: { live: 'https://micuadre-app.vercel.app', repo: 'https://github.com/MarlonGarzonT/finanzas-pwa' },
   },
-
-  // EDITAR: proyectos de ejemplo (reemplázalos o elimínalos antes de publicar)
   {
-    slug: 'agenda-clinica',
-    title: 'Agenda Clínica',
-    kind: { es: 'Web app', en: 'Web app' },
+    slug: 'acceso-facial',
+    title: { es: 'Control de acceso facial', en: 'Facial access control' },
+    kind: { es: 'Seguridad · Visión por computador', en: 'Security · Computer vision' },
     summary: {
-      es: 'Reservas para clínicas con calendario en tiempo real, recordatorios automáticos y panel por sede.',
-      en: 'Clinic bookings with a real-time calendar, automatic reminders and a per-location dashboard.',
+      es: 'Sistema de seguridad para monitorear el acceso a laboratorios universitarios: registra rostros con cámaras Intel RealSense y emite alertas de intrusión.',
+      en: 'Security system that monitors access to university labs: it enrolls faces with Intel RealSense cameras and raises intrusion alerts.',
     },
-    stack: ['Next.js', 'TypeScript', 'PostgreSQL', 'Prisma'],
-    icon: 'siNextdotjs',
-    tint: ['#5AC8FA', '#007AFF'],
-    links: { live: 'https://example.com' },
-  },
-  {
-    slug: 'stockline',
-    title: 'Stockline',
-    kind: { es: 'Dashboard', en: 'Dashboard' },
-    summary: {
-      es: 'Inventario multi-bodega con sincronización offline, escaneo desde el móvil y reportes exportables.',
-      en: 'Multi-warehouse inventory with offline sync, mobile scanning and exportable reports.',
-    },
-    stack: ['React', 'Node.js', 'MongoDB', 'PWA'],
-    icon: 'siReact',
-    tint: ['#64D2FF', '#30B0C7'],
-    links: { live: 'https://example.com' },
-  },
-  {
-    slug: 'pasarela-pagos',
-    title: 'Pasarela de pagos',
-    kind: { es: 'API', en: 'API' },
-    summary: {
-      es: 'Integración de pagos con webhooks idempotentes y conciliación diaria.',
-      en: 'Payments integration with idempotent webhooks and daily reconciliation.',
-    },
-    stack: ['Node.js', 'PostgreSQL', 'Redis'],
-    icon: 'siNodedotjs',
-    tint: ['#4CD964', '#248A3D'],
+    stack: ['React', 'Supabase', 'Intel RealSense'],
+    glyph: CameraViewfinder,
+    tint: ['#5E5CE6', '#3634A3'],
     links: {},
+    inProgress: true,
   },
   {
-    slug: 'lanzamiento-saas',
-    title: 'Lanzamiento SaaS',
+    slug: 'portafolio',
+    title: { es: 'Portafolio personal', en: 'Personal portfolio' },
     kind: { es: 'Sitio web', en: 'Website' },
     summary: {
-      es: 'Sitio de marketing con CMS headless y 100 en Lighthouse.',
-      en: 'Marketing site with a headless CMS and a 100 Lighthouse score.',
+      es: 'Este sitio: bilingüe, con estética de iOS, Liquid Glass, animaciones ligadas al scroll y efectos WebGL, accesible y con JavaScript solo donde hace falta.',
+      en: 'This site: bilingual, with an iOS look, Liquid Glass, scroll-linked animations and WebGL effects, accessible and with JavaScript only where it is needed.',
     },
-    stack: ['Astro', 'Tailwind CSS', 'Sanity'],
+    stack: ['Astro', 'React', 'Konsta UI', 'Tailwind CSS'],
     icon: 'siAstro',
-    tint: ['#FF9F0A', '#FF375F'],
-    links: { live: 'https://example.com' },
+    tint: ['#0A84FF', '#5E5CE6'],
+    links: { repo: 'https://github.com/MarlonGarzonT/Portafolio_Marlon' },
   },
 ];
 
-// EDITAR: tu stack real
+export interface FeaturedSkill {
+  name: string;
+  icon?: BrandKey;
+  glyph?: ComponentType<SVGProps<SVGSVGElement>>;
+  /** Color del ícono (legible sobre fondo oscuro). */
+  color: string;
+  /** Dónde se usó: respalda la prioridad con hechos, sin barras de porcentaje inventadas. */
+  where: Localized;
+}
+
+/**
+ * Tecnologías principales, por uso real: cuántos trabajos y proyectos las usan y qué tan
+ * recientes son (ver `experience` y `projects`).
+ */
+export const featuredSkills: FeaturedSkill[] = [
+  { name: 'SQL · PL/SQL', glyph: DatabaseGlyph, color: '#FF9F0A', where: { es: 'AGP · E.B.S. · La Mansión', en: 'AGP · E.B.S. · La Mansión' } },
+  { name: 'React', icon: 'siReact', color: '#61DAFB', where: { es: 'AGP · Mi Cuadre · 2 proyectos más', en: 'AGP · Mi Cuadre · 2 more projects' } },
+  { name: 'Python', icon: 'siPython', color: '#FFD43B', where: { es: 'AGP (actual)', en: 'AGP (current)' } },
+  // Simple Icons no incluye Java (marca de Oracle): se usa el logo de OpenJDK, con el naranja de Java.
+  { name: 'Java', icon: 'siOpenjdk', color: '#F89820', where: { es: 'E.B.S.', en: 'E.B.S.' } },
+  { name: 'TypeScript', icon: 'siTypescript', color: '#5BA3F5', where: { es: 'E.B.S. · Mi Cuadre', en: 'E.B.S. · Mi Cuadre' } },
+  { name: 'C# · .NET', icon: 'siDotnet', color: '#9B7BFF', where: { es: 'Pinturas La Mansión', en: 'Pinturas La Mansión' } },
+];
+
+/** El resto del stack, de más a menos usado dentro de cada grupo. */
 export const skillGroups: SkillGroup[] = [
   {
-    title: { es: 'Front-end', en: 'Front-end' },
+    title: { es: 'También trabajo con', en: 'Also worked with' },
     items: [
-      { name: 'TypeScript', icon: 'siTypescript' },
-      { name: 'React', icon: 'siReact' },
-      { name: 'Next.js', icon: 'siNextdotjs' },
-      { name: 'Astro', icon: 'siAstro' },
-      { name: 'Tailwind CSS', icon: 'siTailwindcss' },
-    ],
-  },
-  {
-    title: { es: 'Back-end y datos', en: 'Back-end & data' },
-    items: [
+      { name: 'Angular', icon: 'siAngular' },
       { name: 'Node.js', icon: 'siNodedotjs' },
-      { name: 'Express', icon: 'siExpress' },
-      { name: 'Supabase', icon: 'siSupabase' },
-      { name: 'PostgreSQL', icon: 'siPostgresql' },
-      { name: 'Prisma', icon: 'siPrisma' },
-      { name: 'MongoDB', icon: 'siMongodb' },
+      { name: 'JavaScript', icon: 'siJavascript' },
+      { name: 'PHP', icon: 'siPhp' },
+      { name: 'Vue.js', icon: 'siVuedotjs' },
     ],
   },
   {
-    title: { es: 'Infra y calidad', en: 'Infra & quality' },
+    title: { es: 'Bases de datos', en: 'Databases' },
+    items: [{ name: 'Azure SQL' }, { name: 'Oracle Database' }, { name: 'SQL Server' }, { name: 'Supabase', icon: 'siSupabase' }],
+  },
+  {
+    title: { es: 'Integraciones', en: 'Integrations' },
+    items: [{ name: 'REST' }, { name: 'SOAP' }, { name: 'JSON', icon: 'siJson' }, { name: 'XML', icon: 'siXml' }],
+  },
+  {
+    title: { es: 'Entornos empresariales', en: 'Enterprise platforms' },
+    items: [{ name: 'Gupta Team Developer' }, { name: 'Velneo V7' }],
+  },
+  {
+    title: { es: 'Control de versiones', en: 'Version control' },
     items: [
-      { name: 'Docker', icon: 'siDocker' },
-      { name: 'Vercel', icon: 'siVercel' },
-      { name: 'GitHub Actions', icon: 'siGithubactions' },
-      { name: 'Vitest', icon: 'siVitest' },
+      { name: 'Git', icon: 'siGit' },
+      { name: 'GitHub', icon: 'siGithub' },
     ],
+  },
+  {
+    title: { es: 'Idiomas', en: 'Languages' },
+    items: [{ name: { es: 'Español · Nativo', en: 'Spanish · Native' } }, { name: { es: 'Inglés · B2', en: 'English · B2' } }],
   },
 ];
 
-// EDITAR: tu historia
 export const about = {
   es: [
-    'Empecé en el desarrollo web porque quería que las cosas que imaginaba existieran en la pantalla. Con el tiempo entendí que un buen producto no es solo código que funciona: es una interfaz que se entiende sin instrucciones y un sistema que no se cae un viernes por la noche.',
-    'Hoy trabajo en todo el ciclo: hablo con quien usa el producto, diseño la interfaz, modelo los datos, escribo la API y lo despliego. Me gusta el código simple, los tipos estrictos y las decisiones que se pueden explicar en una línea.',
+    'Soy desarrollador multiplataforma y estudio Ingeniería de Sistemas y Desarrollo de Software en la Institución Universitaria de Colombia (grado esperado en 2026). Llevo más de un año diseñando e implementando soluciones para los sectores financiero y de recursos humanos, y hoy lidero la automatización de servicio al cliente en AGP.',
+    'Me enfoco en optimizar procesos, manejar bases de datos complejas y construir arquitecturas seguras e íntegras: desde modelos de evaluación de crédito e integraciones SOAP y REST con sistemas legados hasta módulos de recursos humanos para más de 8.000 empleados.',
+    'Hablo inglés a nivel B2 y uso la IA para automatizar documentación y procesos de desarrollo. Fuera del código juego voleibol: fui campeón de la Liga Arena masculina en 2023.',
   ],
   en: [
-    'I got into web development because I wanted the things I imagined to exist on screen. Over time I learned that a good product is not just code that works: it is an interface you understand without instructions and a system that does not go down on a Friday night.',
-    'Today I work across the whole cycle: I talk to the people who use the product, design the interface, model the data, write the API and ship it. I like simple code, strict types and decisions that can be explained in one line.',
+    'I’m a cross-platform developer studying Systems Engineering and Software Development at Institución Universitaria de Colombia (expected graduation: 2026). For more than a year I’ve been designing and building solutions for the financial and HR sectors, and I currently lead customer service automation at AGP.',
+    'I focus on streamlining processes, handling complex databases and building secure, reliable architectures: from credit assessment models and SOAP and REST integrations with legacy systems to HR modules for more than 8,000 employees.',
+    'I speak English at a B2 level and use AI to automate documentation and development workflows. Away from code I play volleyball: I won the men’s Liga Arena in 2023.',
   ],
 } satisfies Localized<string[]>;

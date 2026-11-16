@@ -1,15 +1,13 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import { Glass, Segmented, SegmentedButton } from 'konsta/react';
+import { Glass } from 'konsta/react';
 import { LayoutGroup, MotionConfig, motion } from 'motion/react';
 import Ios from './ios/Ios';
-import { Auto, Briefcase, CodeIcon, Envelope, Moon, Person, SunMax } from './ios/icons';
-import { readThemePref, setThemePref, type ThemePref } from '../lib/theme';
+import { Briefcase, CodeIcon, Envelope, Person } from './ios/icons';
 
 export interface HeaderProps {
   navLabel: string;
   items: { id: string; label: string }[];
   lang: { href: string; hreflang: string; short: string; label: string };
-  theme: { label: string; system: string; light: string; dark: string };
 }
 
 const ICONS: Record<string, ReactNode> = {
@@ -21,6 +19,14 @@ const ICONS: Record<string, ReactNode> = {
 
 /** Spring de Apple para mover/reposicionar: sin rebote (damping 1.0), respuesta ~0.35 s. Interrumpible. */
 const SPRING = { type: 'spring', bounce: 0, duration: 0.35 } as const;
+
+/**
+ * Material de la navegación flotante. Pasa siempre sobre texto, así que va más denso que el vidrio
+ * por defecto de Konsta (50 % de opacidad, 16 px): con eso el contenido de debajo se transparentaba
+ * y parecía montado sobre los iconos. Más tinte, desenfoque fuerte y saturación (como los paneles).
+ */
+const NAV_GLASS = { bgIos: 'bg-[rgba(28,28,30,0.78)]' };
+const NAV_BLUR = 'backdrop-blur-2xl! backdrop-saturate-150';
 
 function useActiveSection(ids: string[]) {
   const [active, setActive] = useState<string | null>(null);
@@ -45,39 +51,6 @@ function useActiveSection(ids: string[]) {
   return [active, setActive] as const;
 }
 
-function ThemeSwitch({ theme }: { theme: HeaderProps['theme'] }) {
-  const [pref, setPref] = useState<ThemePref>('system');
-  useEffect(() => setPref(readThemePref()), []);
-  const options: { value: ThemePref; label: string; icon: ReactNode }[] = [
-    { value: 'light', label: theme.light, icon: <SunMax /> },
-    { value: 'system', label: theme.system, icon: <Auto /> },
-    { value: 'dark', label: theme.dark, icon: <Moon /> },
-  ];
-  return (
-    <div role="radiogroup" aria-label={theme.label}>
-      <Segmented strong rounded className="w-[108px]">
-        {options.map((o) => (
-          <SegmentedButton
-            key={o.value}
-            active={pref === o.value}
-            role="radio"
-            aria-checked={pref === o.value}
-            aria-label={o.label}
-            title={o.label}
-            onClick={() => {
-              setPref(o.value);
-              setThemePref(o.value);
-            }}
-            className="text-[15px]"
-          >
-            {o.icon}
-          </SegmentedButton>
-        ))}
-      </Segmented>
-    </div>
-  );
-}
-
 function LangLink({ lang }: { lang: HeaderProps['lang'] }) {
   return (
     <a
@@ -92,7 +65,7 @@ function LangLink({ lang }: { lang: HeaderProps['lang'] }) {
   );
 }
 
-export default function Header({ navLabel, items, lang, theme }: HeaderProps) {
+export default function Header({ navLabel, items, lang }: HeaderProps) {
   const [active, setActive] = useActiveSection(items.map((i) => i.id));
 
   return (
@@ -100,7 +73,7 @@ export default function Header({ navLabel, items, lang, theme }: HeaderProps) {
       <MotionConfig reducedMotion="user">
         {/* Escritorio: píldora flotante de vidrio centrada (estructura de porfolio.dev). */}
         <header className="pointer-events-none fixed inset-x-0 top-4 z-50 hidden justify-center md:flex">
-          <Glass component="div" className="chrome pointer-events-auto flex items-center gap-1 rounded-full p-1.5">
+          <Glass component="div" colors={NAV_GLASS} className={`chrome pointer-events-auto flex items-center gap-1 rounded-full p-1.5 ${NAV_BLUR}`}>
             <nav aria-label={navLabel}>
               <LayoutGroup>
                 <ul className="flex items-center">
@@ -130,22 +103,20 @@ export default function Header({ navLabel, items, lang, theme }: HeaderProps) {
             </nav>
             <span className="mx-1 h-5 w-px bg-black/10 dark:bg-white/15" aria-hidden="true" />
             <LangLink lang={lang} />
-            <ThemeSwitch theme={theme} />
           </Glass>
         </header>
 
-        {/* Móvil: idioma y tema arriba; navegación en la barra de pestañas, como una app de iPhone. */}
+        {/* Móvil: idioma arriba; navegación en la barra de pestañas, como una app de iPhone. */}
         <div className="pointer-events-none fixed inset-x-0 top-3 z-50 flex justify-end px-3 md:hidden">
-          <Glass component="div" className="chrome pointer-events-auto flex items-center gap-1 rounded-full p-1">
+          <Glass component="div" colors={NAV_GLASS} className={`chrome pointer-events-auto flex items-center rounded-full p-1 ${NAV_BLUR}`}>
             <LangLink lang={lang} />
-            <ThemeSwitch theme={theme} />
           </Glass>
         </div>
         <nav
           aria-label={navLabel}
           className="pointer-events-none fixed inset-x-0 bottom-0 z-50 flex justify-center px-4 pb-[max(env(safe-area-inset-bottom),12px)] md:hidden"
         >
-          <Glass component="div" className="chrome pointer-events-auto w-full max-w-[420px] rounded-full p-1.5">
+          <Glass component="div" colors={NAV_GLASS} className={`chrome pointer-events-auto w-full max-w-[420px] rounded-full p-1.5 ${NAV_BLUR}`}>
             <LayoutGroup>
               <ul className="grid grid-cols-4">
                 {items.map((item) => {

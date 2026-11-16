@@ -25,3 +25,6 @@ pnpm-debug.log*
 
 # capturas de verificación de Playwright MCP
 .playwright-mcp/
+
+# Hoja de vida local (incluye datos personales como el teléfono): no se publica
+/*.pdf

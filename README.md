@@ -1,6 +1,6 @@
 # Portafolio — Marlon Garzón
 
-Sitio personal de Marlon Garzón, desarrollador full stack. Es estático y bilingüe (español / inglés), con aspecto y comportamiento de app de iOS: listas agrupadas como en Ajustes, proyectos como en la App Store y navegación con material de vidrio.
+Sitio personal de Marlon Garzón, desarrollador full stack. Es estático, bilingüe (español / inglés) y solo en modo oscuro, con aspecto y comportamiento de app de iOS: listas agrupadas como en Ajustes, proyectos como en la App Store y navegación con material de vidrio.
 
 > **Estado:** la estructura y el diseño están listos. El correo, LinkedIn, GitHub y el proyecto Mi Cuadre son reales; la experiencia, los demás proyectos, el stack y el texto de "Sobre mí" de `src/data/profile.ts` son **contenido de ejemplo** (busca `EDITAR`).
 
@@ -12,7 +12,7 @@ Sitio personal de Marlon Garzón, desarrollador full stack. Es estático y bilin
 | Componentes | [Konsta UI 5](https://konstaui.com) con tema iOS (React) |
 | Estilos | [Tailwind CSS 4](https://tailwindcss.com) |
 | Movimiento | [Motion](https://motion.dev): *springs* interrumpibles en la navegación; animaciones CSS ligadas al scroll |
-| Efectos | [React Bits](https://reactbits.dev) (en `src/components/reactbits/`): fondo PlasmaWave (fijo), GradualBlur en los bordes, DecryptedText, ProfileCard, ScrollExpand para el proyecto destacado y StarBorder, GlareHover y Magnet en los botones del inicio |
+| Efectos | [React Bits](https://reactbits.dev) (en `src/components/reactbits/`): fondo GhostFibers (fijo), GradualBlur en los bordes, DecryptedText, ProfileCard, ScrollExpand para el proyecto destacado y StarBorder, GlareHover y Magnet en los botones del inicio, y SpotlightCard, GradientText y ClickSpark en Contacto |
 | Íconos | [Framework7 Icons](https://framework7.io/icons/) (estilo SF Symbols) y [Simple Icons](https://simpleicons.org) (logos de tecnologías) |
 | Tipografía | SF Pro (fuente de sistema de Apple) con Inter como respaldo en Windows y Android |
 
@@ -40,17 +40,18 @@ src/
 ├── assets/            Imágenes optimizadas por Astro (retrato, íconos y portadas de proyectos)
 ├── components/
 │   ├── Header.tsx       Navegación (isla interactiva): píldora de vidrio en escritorio,
-│   │                    barra de pestañas en móvil, idioma y apariencia
+│   │                    barra de pestañas en móvil e idioma
 │   ├── Hero.tsx         Avatar, estado, saludo y acciones
 │   ├── Experience.tsx   Lista agrupada estilo Ajustes
 │   ├── Projects.tsx     Lista estilo App Store
 │   ├── About.tsx        Texto y stack en fichas
-│   ├── Contact.tsx      Filas de contacto con flecha
+│   ├── Contact.tsx      Título de la sección de contacto
+│   ├── ContactCards.tsx Tarjetas de contacto con React Bits (luz que sigue al cursor, copiar correo)
 │   └── ios/             Proveedor del tema iOS, íconos y piezas compartidas
 ├── data/profile.ts    Todo el contenido
 ├── i18n/ui.ts         Textos de interfaz (ES/EN, tipados)
-├── layouts/           Documento base: SEO, hreflang y tema sin destello
-├── lib/               Logos (Simple Icons) y apariencia clara/oscura
+├── layouts/           Documento base: SEO, hreflang y modo oscuro fijo
+├── lib/               Logos (Simple Icons) y preferencia de movimiento reducido
 └── pages/             / (redirección por idioma) · /[lang]/ · 404
 ```
 
@@ -65,7 +66,7 @@ src/
   - Con el teclado, al llegar a sus enlaces la escena se expande sola.
   - Con movimiento reducido se muestra estática; sin JavaScript se oculta, porque el proyecto sigue en la lista.
 - **Tema iOS en cada sección:** Astro renderiza cada componente React por separado, así que cada uno se envuelve en `components/ios/Ios.tsx` (`KonstaProvider` con tema iOS). La clase `k-ios` está en `<html>`.
-- **Apariencia:** automática, clara u oscura. Un script en el `<head>` la aplica antes de pintar y el cambio se hace con un fundido (View Transitions).
+- **Solo modo oscuro:** `<html>` lleva la clase `dark` y `color-scheme: dark` desde el HTML, sin script ni selector, así que no hay destello claro al cargar. El fondo GhostFibers está pensado para fondo negro y en claro no funcionaba.
 - **Principios de diseño de Apple:**
   - Respuesta al pulsar (escala en `:active`; el indicador se mueve en `pointerdown`).
   - *Springs* sin rebote e interrumpibles.
@@ -83,7 +84,9 @@ Todo vive en [`src/data/profile.ts`](src/data/profile.ts):
 - `skillGroups`: stack por áreas.
 - `about`: texto de "Sobre mí".
 
-La foto está en `src/assets/retrato-marlon.png`; el avatar se genera en 88, 176 y 264 px en WebP.
+Hay dos fotos:
+- `src/assets/marlon-avatar.jpg` es la foto principal: el avatar del inicio y de la cápsula de la barra. Se genera en WebP a 88 y 176 px; el tamaño de 264 px solo se crea si el original es al menos así de grande, porque no se amplía.
+- `src/assets/retrato-marlon.png` es el retrato recortado sin fondo que usa la tarjeta de "Sobre mí".
 
 Las portadas del proyecto destacado son `src/assets/proyectos/mi-cuadre-portada.webp` (3840×2160) y `mi-cuadre-portada-movil.webp` (1620×2880).
 
@@ -98,7 +101,7 @@ Sitio estático: `npm run build` y publicar `dist/` (Vercel, Netlify, Cloudflare
 ## Créditos
 
 - Estructura de secciones inspirada en [porfolio.dev](https://github.com/midudev/porfolio.dev), de midudev. El código y el diseño de este sitio son propios.
-- [React Bits](https://github.com/DavidHDev/react-bits), de David Haz: PlasmaWave, GradualBlur, DecryptedText, ProfileCard, ScrollExpand, StarBorder, GlareHover y Magnet. Licencia MIT + Commons Clause, incluida en `src/components/reactbits/LICENSE.md`: se pueden usar en sitios y productos, pero no vender ni redistribuir los componentes en sí.
+- [React Bits](https://github.com/DavidHDev/react-bits), de David Haz: GhostFibers, GradualBlur, DecryptedText, ProfileCard, ScrollExpand, StarBorder, GlareHover, Magnet, SpotlightCard, GradientText y ClickSpark. Licencia MIT + Commons Clause, incluida en `src/components/reactbits/LICENSE.md`: se pueden usar en sitios y productos, pero no vender ni redistribuir los componentes en sí.
   - ScrollExpand está adaptado: punto focal, legibilidad del título y accesibilidad. Los cambios se detallan en la cabecera del archivo.
   - El brillo del distintivo "Disponible" reproduce el efecto ShinyText en CSS.
 - [Konsta UI](https://github.com/konstaui/konsta) y [Framework7 Icons](https://github.com/framework7io/framework7-icons) (MIT), [Simple Icons](https://github.com/simple-icons/simple-icons) (CC0; los logos son marcas de sus dueños), [Motion](https://github.com/motiondivision/motion) (MIT), [Inter](https://github.com/rsms/inter) (OFL 1.1).
