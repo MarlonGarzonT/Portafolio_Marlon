@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
-import { Glass } from 'konsta/react';
 import Ios from './ios/Ios';
+import { GlassPanel } from './ios/parts';
 import type { Locale, Translator } from '../i18n/ui';
 import { profile } from '../data/profile';
 
@@ -17,24 +17,12 @@ interface Props {
 
 /**
  * Inicio: avatar + estado, saludo, presentación y acciones (estructura de porfolio.dev), sobre un
- * panel de Liquid Glass (`Glass` de Konsta, el material de iOS) para que el texto se lea sobre el
- * fondo animado. Ajustes al material por defecto, pensado para barras pequeñas:
- * - Más desenfoque y saturación y un tinte más denso: superficie grande = material más grueso, y
- *   contraste AA aunque pase por detrás la parte más brillante del plasma.
- * - `touch-auto!`: Glass trae `touch-action: none`, que en un panel de este tamaño impediría hacer
- *   scroll en el móvil al deslizar sobre él.
- * - Sin reflejo al pasar el puntero (es un contenedor, no un control) y superficie sólida con
- *   `prefers-reduced-transparency` (clase `chrome`).
+ * panel de Liquid Glass (`GlassPanel`) para que el texto se lea sobre el fondo animado.
  */
 export default function Hero({ locale, t, avatar, name, actions }: Props) {
   return (
     <Ios>
-      <Glass
-        component="div"
-        highlight={false}
-        colors={{ bgIos: 'bg-white/70 dark:bg-[rgba(28,28,30,0.55)]' }}
-        className="chrome mx-4 max-w-[40rem] rounded-[28px] p-5 touch-auto! backdrop-blur-2xl! backdrop-saturate-150 sm:rounded-[32px] sm:p-8"
-      >
+      <GlassPanel className="mx-4 max-w-[40rem] p-5 sm:p-8">
         <div className="enter mb-6 flex items-center gap-4" style={{ ['--i' as string]: 0 }}>
           <div className="relative shrink-0">
             <div className="absolute inset-0 scale-125 rounded-full bg-primary/25 blur-xl" aria-hidden="true" />
@@ -73,7 +61,7 @@ export default function Hero({ locale, t, avatar, name, actions }: Props) {
             {actions}
           </div>
         )}
-      </Glass>
+      </GlassPanel>
     </Ios>
   );
 }

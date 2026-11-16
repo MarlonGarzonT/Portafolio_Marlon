@@ -99,13 +99,6 @@
   }
 }
 
-/* Cambio de tema: fundido suave en vez de un salto brusco de brillo (View Transitions). */
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation-duration: 280ms;
-  animation-timing-function: ease;
-}
-
 /* ============================================================================
    Animaciones de scroll
    - Ligadas al scroll (CSS scroll-driven): corren fuera del hilo principal, siguen el dedo 1:1
@@ -258,9 +251,9 @@
    Efectos de React Bits
    ========================================================================== */
 
-/* Fondo PlasmaWave fijo. Con transparencias reducidas se atenúa: el material deja de competir con el texto. */
+/* Fondo GhostFibers fijo. Con transparencias reducidas se atenúa: el material deja de competir con el texto. */
 @media (prefers-reduced-transparency: reduce) {
-  .plasma-bg {
+  .fibers-bg {
     opacity: 0.35;
   }
 }

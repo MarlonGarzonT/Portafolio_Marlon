@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { FocusEvent, ReactNode } from 'react';
 import ScrollExpand from './ScrollExpand';
-import { useReducedMotion } from '../../lib/useIsDark';
+import { useReducedMotion } from '../../lib/useReducedMotion';
 
 interface Props {
   /** Portada horizontal (16:9) para pantallas apaisadas. */

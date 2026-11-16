@@ -9,8 +9,9 @@ import Experience from '../../components/Experience.tsx';
 import Projects from '../../components/Projects.tsx';
 import About from '../../components/About.tsx';
 import Contact from '../../components/Contact.tsx';
+import ContactCards from '../../components/ContactCards.tsx';
 import CompactIdentity from '../../components/CompactIdentity.tsx';
-import BackgroundPlasma from '../../components/reactbits/BackgroundPlasma.tsx';
+import BackgroundFibers from '../../components/reactbits/BackgroundFibers.tsx';
 import EdgeBlur from '../../components/reactbits/EdgeBlur.tsx';
 import FeaturedExpand from '../../components/reactbits/FeaturedExpand.tsx';
 import portadaMiCuadre from '../../assets/proyectos/mi-cuadre-portada.webp';
@@ -27,8 +28,9 @@ const t = useTranslations(locale);
 const alt = otherLocale(locale);
 
 // Avatar a 1x/2x/3x de 88 px (pantallas retina incluidas).
-const sizes = [88, 176, 264];
-const variants = await Promise.all(sizes.map((width) => getImage({ src: profile.photo, width, format: 'webp' })));
+// Solo tamaños que la foto original puede dar (no se amplía: se vería borrosa).
+const sizes = [88, 176, 264].filter((w) => w <= profile.avatar.width);
+const variants = await Promise.all(sizes.map((width) => getImage({ src: profile.avatar, width, format: 'webp' })));
 const avatar = {
   src: variants[1].src,
   srcSet: variants.map((v, i) => `${v.src} ${sizes[i]}w`).join(', '),
@@ -85,12 +87,11 @@ const sections = [
     navLabel={t('nav.label')}
     items={sections}
     lang={{ href: `/${alt}/`, hreflang: htmlLang[alt], short: t('lang.short'), label: t('lang.switch') }}
-    theme={{ label: t('theme.label'), system: t('theme.system'), light: t('theme.light'), dark: t('theme.dark') }}
   />
 
-  <!-- Fondo PlasmaWave (React Bits), fijo: queda siempre a la vista mientras el contenido pasa por encima. -->
-  <div class="plasma-bg pointer-events-none fixed inset-0 z-0" aria-hidden="true">
-    <BackgroundPlasma client:only="react" />
+  <!-- Fondo GhostFibers (React Bits), fijo: queda siempre a la vista mientras el contenido pasa por encima. -->
+  <div class="fibers-bg pointer-events-none fixed inset-0 z-0" aria-hidden="true">
+    <BackgroundFibers client:only="react" />
   </div>
   <!-- Desenfoque progresivo en los bordes de la pantalla (GradualBlur de React Bits). -->
   <EdgeBlur client:idle />
@@ -139,7 +140,7 @@ const sections = [
         src={portada.src}
         srcPortrait={portadaMovil.src}
         alt={t('featured.alt')}
-        title={featured.title}
+        title={featured.title[locale]}
         hint={t('featured.hint')}
       >
         <!-- Degradado propio bajo el texto, legible sea cual sea la imagen. En horizontal el texto va a la
@@ -157,7 +158,7 @@ const sections = [
               <img src={featuredIcon.src} srcset={featuredIcon.srcSet} sizes="44px" width="44" height="44" alt="" class="size-11 rounded-[10px]" />
             )}
             <div>
-              <h2 id="destacado-title" class="text-[22px] font-semibold leading-tight tracking-[-0.01em]">{featured.title}</h2>
+              <h2 id="destacado-title" class="text-[22px] font-semibold leading-tight tracking-[-0.01em]">{featured.title[locale]}</h2>
               <p class="text-[13px] text-white/70">{featured.kind[locale]}</p>
             </div>
           </div>
@@ -199,7 +200,27 @@ const sections = [
             />
           </div>
         </About></section>
-      <section id="contacto" aria-labelledby="contacto-title" data-reveal><Contact t={t} /></section>
+      <section id="contacto" aria-labelledby="contacto-title" data-reveal>
+        <Contact t={t}>
+          <ContactCards
+            slot="cards"
+            client:visible={{ rootMargin: '200px' }}
+            labels={{
+              lead: t('contact.lead'),
+              cta: t('contact.cta'),
+              email: t('contact.email'),
+              profile: t('contact.profile'),
+              external: t('common.external'),
+              copy: t('contact.copy'),
+              copied: t('contact.copied'),
+              copiedLive: t('contact.copiedLive'),
+            }}
+            email={profile.email}
+            linkedin={profile.socials.linkedin}
+            github={profile.socials.github}
+          />
+        </Contact>
+      </section>
     </div>
 
     <footer class="mx-auto mt-20 max-w-3xl px-4 border-t border-black/10 pt-6 text-[13px] text-black/50 dark:border-white/10 dark:text-white/50">

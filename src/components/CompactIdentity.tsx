@@ -21,9 +21,10 @@ export default function CompactIdentity({ name, shortName, avatar }: Props) {
       <Glass
         component="a"
         {...link}
+        colors={{ bgIos: 'bg-[rgba(28,28,30,0.78)]' }}
         aria-hidden="true"
         tabIndex={-1}
-        className="chrome compact-id fixed top-3 left-3 z-50 flex items-center gap-2 rounded-full p-1 pr-3.5 md:top-4 md:left-4 md:hidden xl:flex"
+        className="chrome compact-id fixed top-3 left-3 z-50 flex items-center gap-2 rounded-full p-1 pr-3.5 backdrop-blur-2xl! backdrop-saturate-150 md:top-4 md:left-4 md:hidden xl:flex"
       >
         <img src={avatar.src} srcSet={avatar.srcSet} sizes="32px" width={32} height={32} alt="" className="size-8 rounded-full object-cover" />
         <span className="text-[14px] font-semibold tracking-tight">

@@ -8,7 +8,7 @@ export { default as Person } from 'framework7-icons/react/esm/PersonCropCircle.j
 export { default as Envelope } from 'framework7-icons/react/esm/Envelope.js';
 export { default as LogoGithub } from 'framework7-icons/react/esm/LogoGithub.js';
 export { default as LogoLinkedin } from 'framework7-icons/react/esm/LogoLinkedin.js';
-export { default as SunMax } from 'framework7-icons/react/esm/SunMax.js';
-export { default as Moon } from 'framework7-icons/react/esm/Moon.js';
-export { default as Auto } from 'framework7-icons/react/esm/CircleLefthalfFill.js';
 export { default as Sparkles } from 'framework7-icons/react/esm/Sparkles.js';
+export { default as ArrowUpRight } from 'framework7-icons/react/esm/ArrowUpRight.js';
+export { default as DocOnDoc } from 'framework7-icons/react/esm/DocOnDoc.js';
+export { default as Checkmark } from 'framework7-icons/react/esm/Checkmark.js';

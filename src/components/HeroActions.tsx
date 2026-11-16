@@ -3,7 +3,6 @@ import StarBorder from './reactbits/StarBorder';
 import Magnet from './reactbits/Magnet';
 import GlareHover from './reactbits/GlareHover';
 import { Envelope, LogoGithub, LogoLinkedin } from './ios/icons';
-import { useIsDark } from '../lib/useIsDark';
 
 interface Props {
   labels: { nav: string; contact: string; external: string };
@@ -35,30 +34,29 @@ function Magnetic({ children, className = '' }: { children: ReactNode; className
 }
 
 export default function HeroActions({ labels, email, linkedin, github }: Props) {
-  const dark = useIsDark();
   const external = { target: '_blank', rel: 'noopener noreferrer' };
 
-  // Pastilla de vidrio: fondo y borde por variables (GlareHover los aplica como estilo en línea,
-  // así que las variantes de tema se resuelven con custom properties).
+  // Pastilla de vidrio oscuro con reflejo blanco en modo "screen". El ancho va por variable porque
+  // GlareHover lo aplica como estilo en línea (100 % en la rejilla móvil, automático desde sm).
   const glass = (href: string, icon: ReactNode, label: string) => (
     <Magnetic>
       <GlareHover
         width="var(--pill-w)"
-        background="var(--pill-bg)"
-        borderColor="var(--pill-border)"
+        background="rgba(255,255,255,0.08)"
+        borderColor="rgba(255,255,255,0.14)"
         borderRadius={`${PILL}px`}
-        glareColor={dark ? '#ffffff' : '#007aff'}
-        glareOpacity={dark ? 0.32 : 0.18}
-        blendMode={dark ? 'screen' : 'normal'}
+        glareColor="#ffffff"
+        glareOpacity={0.32}
+        blendMode="screen"
         glareAngle={-30}
         glareSize={45}
         transitionDuration={600}
-        className="[--pill-bg:rgba(255,255,255,0.55)] [--pill-border:rgba(0,0,0,0.08)] [--pill-w:100%] shadow-[inset_0_1px_0_rgba(255,255,255,0.7)] has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-primary sm:[--pill-w:auto] dark:[--pill-bg:rgba(255,255,255,0.08)] dark:[--pill-border:rgba(255,255,255,0.14)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]"
+        className="[--pill-w:100%] shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-primary sm:[--pill-w:auto]"
       >
         <a
           href={href}
           {...external}
-          className="press flex h-12 w-full items-center justify-center gap-2 px-5 text-[17px] font-semibold text-black/85 outline-none dark:text-white"
+          className="press flex h-12 w-full items-center justify-center gap-2 px-5 text-[17px] font-semibold text-white outline-none"
         >
           {icon}
           {label}
@@ -95,7 +93,7 @@ export default function HeroActions({ labels, email, linkedin, github }: Props) 
           {labels.contact}
         </StarBorder>
       </Magnetic>
-      {glass(linkedin, <LogoLinkedin className="size-[18px] text-[#0a66c2] dark:text-[#4da3ff]" aria-hidden="true" />, 'LinkedIn')}
+      {glass(linkedin, <LogoLinkedin className="size-[18px] text-[#4da3ff]" aria-hidden="true" />, 'LinkedIn')}
       {glass(github, <LogoGithub className="size-[18px]" aria-hidden="true" />, 'GitHub')}
     </nav>
   );

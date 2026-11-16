@@ -18,7 +18,10 @@ const canonical = urlFor(locale);
 ---
 
 <!doctype html>
-<html lang={htmlLang[locale]} class="k-ios">
+<!-- Solo modo oscuro: `dark` fijo (variantes dark: de Tailwind y Konsta) y esquema de color oscuro
+     para los controles nativos y las barras de desplazamiento. -->
+<html lang={htmlLang[locale]} class="k-ios dark" style="color-scheme: dark">
+
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -39,36 +42,12 @@ const canonical = urlFor(locale);
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:locale" content={ogLocale[locale]} />
-    <meta name="color-scheme" content="light dark" />
-    <meta name="theme-color" content="#efeff4" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="theme-color" content="#000000" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
-
-    <!-- Aplica el tema antes de pintar (sin destello). Misma lógica que src/lib/theme.ts. -->
-    <script is:inline>
-      (function () {
-        var pref = 'system';
-        try {
-          pref = localStorage.getItem('theme') || 'system';
-        } catch (e) {}
-        var mq = window.matchMedia('(prefers-color-scheme: dark)');
-        function paint() {
-          var p = 'system';
-          try {
-            p = localStorage.getItem('theme') || 'system';
-          } catch (e) {}
-          var dark = p === 'dark' || (p === 'system' && mq.matches);
-          document.documentElement.classList.toggle('dark', dark);
-          document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
-        }
-        paint();
-        // En "Automática", sigue los cambios del sistema en vivo.
-        mq.addEventListener('change', paint);
-      })();
-    </script>
   </head>
-  <body id="top" class="bg-ios-light-surface font-ios text-black antialiased dark:bg-ios-dark-surface dark:text-white">
+  <body id="top" class="bg-ios-dark-surface font-ios text-white antialiased">
     <slot />
   </body>
 </html>

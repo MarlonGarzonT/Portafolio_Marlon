@@ -22,13 +22,14 @@ export default function Projects({ locale, t, icons = {} }: Props) {
       </SectionTitle>
       <List strongIos insetIos dividersIos className="list-full-text my-0!">
         {projects.map((p) => {
+          const title = p.title[locale];
           const href = p.links.live ?? p.links.repo;
           const label = p.links.live ? t('projects.view') : t('projects.code');
           return (
             <ListItem
               key={p.slug}
-              media={<AppIcon icon={p.icon} tint={p.tint} image={icons[p.slug]} />}
-              title={<span className="font-semibold">{p.title}</span>}
+              media={<AppIcon icon={p.icon} glyph={p.glyph} tint={p.tint} image={icons[p.slug]} />}
+              title={<span className="font-semibold">{title}</span>}
               subtitle={`${p.kind[locale]} · ${p.stack.join(' · ')}`}
               text={
                 <span className="block whitespace-normal">
@@ -43,14 +44,20 @@ export default function Projects({ locale, t, icons = {} }: Props) {
                       {t('projects.code')}
                       <span className="sr-only">
                         {' '}
-                        {p.title} {t('common.external')}
+                        {title} {t('common.external')}
                       </span>
                     </a>
                   )}
                 </span>
               }
               after={
-                href && (
+                p.inProgress ? (
+                  // Estado, no acción: cápsula gris sin interacción (como "Próximamente" en la App Store).
+                  <span className="rounded-full bg-black/5 px-3 py-1 text-[12px] font-bold uppercase tracking-wide text-black/55 dark:bg-white/10 dark:text-white/65">
+                    {t('projects.wip')}
+                  </span>
+                ) : (
+                  href && (
                   <Button
                     inline
                     rounded
@@ -63,9 +70,10 @@ export default function Projects({ locale, t, icons = {} }: Props) {
                     {label}
                     <span className="sr-only">
                       {' '}
-                      {p.title} {t('common.external')}
+                      {title} {t('common.external')}
                     </span>
                   </Button>
+                  )
                 )
               }
             />

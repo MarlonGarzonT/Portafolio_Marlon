@@ -1,5 +1,29 @@
-import type { ReactNode } from 'react';
+import type { ComponentType, ReactNode, SVGProps } from 'react';
+import { Glass } from 'konsta/react';
 import { brand, type BrandKey } from '../../lib/brands';
+
+/**
+ * Panel de Liquid Glass para bloques de contenido (inicio, experiencia…), con `Glass` de Konsta.
+ * Ajustes al material por defecto, pensado para barras pequeñas:
+ * - Más desenfoque y saturación y un tinte más denso: superficie grande = material más grueso, y
+ *   contraste AA aunque pase por detrás la parte más brillante del fondo.
+ * - `touch-auto!`: Glass trae `touch-action: none`, que en un panel grande impediría hacer scroll
+ *   en el móvil al deslizar sobre él.
+ * - Sin reflejo al pasar el puntero (es un contenedor, no un control) y superficie sólida con
+ *   `prefers-reduced-transparency` (clase `chrome`).
+ */
+export function GlassPanel({ className = '', children }: { className?: string; children: ReactNode }) {
+  return (
+    <Glass
+      component="div"
+      highlight={false}
+      colors={{ bgIos: 'bg-white/70 dark:bg-[rgba(28,28,30,0.55)]' }}
+      className={`chrome rounded-[28px] touch-auto! backdrop-blur-2xl! backdrop-saturate-150 sm:rounded-[32px] ${className}`}
+    >
+      {children}
+    </Glass>
+  );
+}
 
 /** Ícono cuadrado redondeado de color, como los de Ajustes de iOS. */
 export function SettingsIcon({ color, children, size = 'md' }: { color: string; children: ReactNode; size?: 'md' | 'lg' }) {
@@ -32,7 +56,18 @@ export function BrandGlyph({ icon, className = 'size-4', mono = false }: { icon:
  * Ícono de app (squircle con degradado y brillo superior), como en la App Store.
  * Radio ≈ 22,5% del lado, el de los íconos de iOS.
  */
-export function AppIcon({ icon, tint, image }: { icon: BrandKey; tint: [string, string]; image?: { src: string; srcSet: string } }) {
+export function AppIcon({
+  icon,
+  glyph: Glyph,
+  tint,
+  image,
+}: {
+  icon?: BrandKey;
+  /** Ícono de sistema (estilo SF Symbols); tiene prioridad sobre el logo `icon`. */
+  glyph?: ComponentType<SVGProps<SVGSVGElement>>;
+  tint: [string, string];
+  image?: { src: string; srcSet: string };
+}) {
   if (image) {
     return (
       <img
@@ -56,7 +91,11 @@ export function AppIcon({ icon, tint, image }: { icon: BrandKey; tint: [string, 
       style={{ background: `linear-gradient(180deg, ${tint[0]}, ${tint[1]})` }}
     >
       <span className="pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/25 to-transparent" />
-      <BrandGlyph icon={icon} mono className="relative size-[30px]" />
+      {Glyph ? (
+        <Glyph className="relative size-[30px]" aria-hidden="true" />
+      ) : (
+        icon && <BrandGlyph icon={icon} mono className="relative size-[30px]" />
+      )}
     </span>
   );
 }
