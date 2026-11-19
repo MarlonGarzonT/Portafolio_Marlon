@@ -64,7 +64,10 @@ export default function About({ locale, t, card }: { locale: Locale; t: Translat
                   const name = typeof item.name === 'string' ? item.name : item.name[locale];
                   return (
                     <li key={name}>
-                      <Chip outline media={item.icon && <BrandGlyph icon={item.icon} className="size-4" />} className="gap-1.5">
+                      {/* El logo va como contenido, no en `media`: en iOS Konsta lo desplaza -12 px (`-ms-3`)
+                          para avatares que llenan el borde, y un logo pequeño acababa sobre el contorno. */}
+                      <Chip outline className="gap-1.5 ps-2.5">
+                        {item.icon && <BrandGlyph icon={item.icon} className="size-4 shrink-0" />}
                         {name}
                       </Chip>
                     </li>

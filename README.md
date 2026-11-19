@@ -43,7 +43,7 @@ src/
 │   │                    barra de pestañas en móvil e idioma
 │   ├── Hero.tsx         Avatar, estado, saludo y acciones
 │   ├── Experience.tsx   Lista agrupada estilo Ajustes
-│   ├── Projects.tsx     Lista estilo App Store
+│   ├── Projects.tsx     Lista estilo App Store (sección pausada: ver "Lista de proyectos")
 │   ├── About.tsx        Texto y stack en fichas
 │   ├── Contact.tsx      Título de la sección de contacto
 │   ├── ContactCards.tsx Tarjetas de contacto con React Bits (luz que sigue al cursor, copiar correo)
@@ -60,8 +60,7 @@ src/
 - **HTML estático con islas de React.** Las secciones son componentes de Konsta renderizados a HTML en el build. Solo se hidratan las piezas interactivas:
   - La navegación, cuando el navegador está libre (`client:idle`); sus enlaces funcionan antes como HTML normal.
   - Los efectos de React Bits, incluidos los botones del inicio (`HeroActions.tsx`), que antes de hidratar ya funcionan como enlaces normales.
-  - El proyecto destacado, al acercarse a la pantalla (`client:visible`).
-- **Proyecto destacado (ScrollExpand):** una ventana con el nombre de la app se expande a pantalla completa al hacer scroll y termina con la descripción y los enlaces.
+- **Proyecto destacado (ScrollExpand):** Mi Cuadre, con capturas reales de la app. Una ventana con el nombre de la app se expande a pantalla completa al hacer scroll y termina con la descripción y los enlaces. Es hoy el único proyecto visible de la página.
   - Usa una portada horizontal (16:9, teléfonos a la derecha y texto a la izquierda) o vertical (9:16, texto debajo) según la orientación.
   - Con el teclado, al llegar a sus enlaces la escena se expande sola.
   - Con movimiento reducido se muestra estática; sin JavaScript se oculta, porque el proyecto sigue en la lista.
@@ -73,6 +72,13 @@ src/
   - Material translúcido en la navegación, con fundido donde se cruza con el contenido.
   - Tracking negativo en títulos.
   - Respeto de `prefers-reduced-motion` y `prefers-reduced-transparency`.
+
+## Lista de proyectos: sección pausada
+
+La lista "Proyectos" (estilo App Store) está **fuera de la página** mientras no haya más proyectos que mostrar. El proyecto destacado de Mi Cuadre sí se mantiene. Para volver a mostrar la lista:
+
+- Los datos siguen en `projects` de `src/data/profile.ts` (Mi Cuadre, control de acceso facial y este portafolio).
+- Importa `Projects` en `src/pages/[lang]/index.astro`, genera los íconos con `getImage` (como el avatar), monta `<section id="proyectos">` después del destacado y añade `{ id: 'proyectos', label: t('nav.projects') }` a `sections`. La navegación se ajusta sola al número de secciones.
 
 ## Editar el contenido
 
@@ -88,9 +94,10 @@ Hay dos fotos:
 - `src/assets/marlon-avatar.jpg` es la foto principal: el avatar del inicio y de la cápsula de la barra. Se genera en WebP a 88 y 176 px; el tamaño de 264 px solo se crea si el original es al menos así de grande, porque no se amplía.
 - `src/assets/retrato-marlon.png` es el retrato recortado sin fondo que usa la tarjeta de "Sobre mí".
 
-Las portadas del proyecto destacado son `src/assets/proyectos/mi-cuadre-portada.webp` (3840×2160) y `mi-cuadre-portada-movil.webp` (1620×2880).
+Las portadas del proyecto destacado son `src/assets/proyectos/mi-cuadre-demo.webp` (3840×2160) y `mi-cuadre-demo-movil.webp` (1620×2880).
 
-- **Origen:** composiciones hechas a partir de la pantalla pública de inicio de sesión de la app.
+- **Origen:** composiciones con dos capturas reales de la app (Resumen y Reportes) en marcos de iPhone. Las fuentes (HTML y capturas) quedan en `.playwright-mcp/`, que no se sube a Git. En Resumen se tapó la fila que asomaba bajo la barra de pestañas con el nombre de otra persona.
+- **Ícono:** `mi-cuadre.png` es el ícono actual de la PWA (512 px), tomado de su manifiesto.
 - **Cómo cambiarlas:** basta con reemplazar los archivos manteniendo la composición. En la horizontal, el contenido va a la derecha y la izquierda queda despejada para el texto; en la vertical, arriba, con la parte de abajo despejada.
 - **Encuadre inicial:** si cambia la composición, ajusta `focusX`/`focusY` en `src/components/reactbits/FeaturedExpand.tsx`.
 

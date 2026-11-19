@@ -6,7 +6,6 @@ import Header from '../../components/Header.tsx';
 import Hero from '../../components/Hero.tsx';
 import HeroActions from '../../components/HeroActions.tsx';
 import Experience from '../../components/Experience.tsx';
-import Projects from '../../components/Projects.tsx';
 import About from '../../components/About.tsx';
 import Contact from '../../components/Contact.tsx';
 import ContactCards from '../../components/ContactCards.tsx';
@@ -14,8 +13,8 @@ import CompactIdentity from '../../components/CompactIdentity.tsx';
 import BackgroundFibers from '../../components/reactbits/BackgroundFibers.tsx';
 import EdgeBlur from '../../components/reactbits/EdgeBlur.tsx';
 import FeaturedExpand from '../../components/reactbits/FeaturedExpand.tsx';
-import portadaMiCuadre from '../../assets/proyectos/mi-cuadre-portada.webp';
-import portadaMiCuadreMovil from '../../assets/proyectos/mi-cuadre-portada-movil.webp';
+import portadaMiCuadre from '../../assets/proyectos/mi-cuadre-demo.webp';
+import portadaMiCuadreMovil from '../../assets/proyectos/mi-cuadre-demo-movil.webp';
 import DecryptedText from '../../components/reactbits/DecryptedText.tsx';
 import AboutCard from '../../components/reactbits/AboutCard.tsx';
 import { locales, useTranslations, otherLocale, htmlLang, type Locale } from '../../i18n/ui';
@@ -36,28 +35,17 @@ const avatar = {
   srcSet: variants.map((v, i) => `${v.src} ${sizes[i]}w`).join(', '),
 };
 
-// Íconos reales de proyectos (60 px a 1x/2x/3x).
-const iconSizes = [60, 120, 180];
-const projectIcons = Object.fromEntries(
-  await Promise.all(
-    projects
-      .filter((p) => p.image)
-      .map(async (p) => {
-        const v = await Promise.all(iconSizes.map((width) => getImage({ src: p.image!, width, format: 'webp' })));
-        return [p.slug, { src: v[1].src, srcSet: v.map((x, i) => `${x.src} ${iconSizes[i]}w`).join(', ') }] as const;
-      }),
-  ),
-);
-
 // Tarjeta holográfica: foto recortada (fondo transparente) en WebP.
 const [cardPhoto, cardMini] = await Promise.all([
   getImage({ src: profile.photo, width: 680, format: 'webp' }),
   getImage({ src: profile.photo, width: 96, format: 'webp' }),
 ]);
 
-// Proyecto destacado (ScrollExpand): portada a pantalla completa, horizontal y vertical.
+// Proyecto destacado (ScrollExpand): portada a pantalla completa, horizontal y vertical, e ícono de la app.
 const featured = projects.find((p) => p.slug === 'mi-cuadre')!;
-const featuredIcon = projectIcons[featured.slug];
+const iconSizes = [60, 120, 180];
+const iconVariants = await Promise.all(iconSizes.map((width) => getImage({ src: featured.image!, width, format: 'webp' })));
+const featuredIcon = { src: iconVariants[1].src, srcSet: iconVariants.map((v, i) => `${v.src} ${iconSizes[i]}w`).join(', ') };
 const [portada, portadaMovil] = await Promise.all([
   getImage({ src: portadaMiCuadre, width: 2400, format: 'webp', quality: 80 }),
   getImage({ src: portadaMiCuadreMovil, width: 1440, format: 'webp', quality: 80 }),
@@ -65,7 +53,6 @@ const [portada, portadaMovil] = await Promise.all([
 
 const sections = [
   { id: 'experiencia', label: t('nav.experience') },
-  { id: 'proyectos', label: t('nav.projects') },
   { id: 'sobre-mi', label: t('nav.about') },
   { id: 'contacto', label: t('nav.contact') },
 ];
@@ -98,7 +85,7 @@ const sections = [
 
   <!-- overflow-x-clip: el giro 3D de las secciones al hacer scroll (perspectiva) y el resplandor de
        StarBorder (48 px fuera del botón) sobresalen por los lados y causaban scroll horizontal en móvil.
-       `clip` no crea contenedor de scroll: el sticky del proyecto destacado sigue funcionando. -->
+       `clip` no crea contenedor de scroll (no rompe elementos `sticky`). -->
   <main id="contenido" tabindex="-1" class="relative overflow-x-clip pb-32 outline-none md:pb-24">
     <div class="mx-auto max-w-3xl">
       <section class="hero-collapse relative pt-20 pb-16 md:pt-40 md:pb-28" aria-labelledby="hero-title">
@@ -154,9 +141,7 @@ const sections = [
           class="absolute flex flex-col gap-4 text-white portrait:inset-x-0 portrait:bottom-[max(9%,7.5rem)] portrait:mx-auto portrait:max-w-2xl portrait:items-center portrait:px-6 portrait:text-center landscape:top-1/2 landscape:left-[6%] landscape:w-[min(42%,34rem)] landscape:-translate-y-1/2 landscape:items-start landscape:text-left"
         >
           <div class="flex items-center gap-3 text-left">
-            {featuredIcon && (
-              <img src={featuredIcon.src} srcset={featuredIcon.srcSet} sizes="44px" width="44" height="44" alt="" class="size-11 rounded-[10px]" />
-            )}
+            <img src={featuredIcon.src} srcset={featuredIcon.srcSet} sizes="44px" width="44" height="44" alt="" class="size-11 rounded-[10px]" />
             <div>
               <h2 id="destacado-title" class="text-[22px] font-semibold leading-tight tracking-[-0.01em]">{featured.title[locale]}</h2>
               <p class="text-[13px] text-white/70">{featured.kind[locale]}</p>
@@ -179,11 +164,10 @@ const sections = [
         </div>
       </FeaturedExpand>
     </section>
-    <!-- Sin JavaScript la escena no puede montarse: se oculta el hueco (Mi Cuadre sigue en Proyectos). -->
+    <!-- Sin JavaScript la escena no puede montarse: se oculta el hueco. -->
     <noscript><style is:inline>#destacado { display: none; }</style></noscript>
 
     <div class="mx-auto mt-20 max-w-3xl space-y-20 md:mt-24 md:space-y-24">
-      <section id="proyectos" aria-labelledby="proyectos-title" data-reveal><Projects locale={locale} t={t} icons={projectIcons} /></section>
       <section id="sobre-mi" aria-labelledby="sobre-mi-title" data-reveal><About locale={locale} t={t}>
           <!-- Espacio reservado con la proporción real de la tarjeta (alto = 1,444 × ancho): sin saltos al cargar. -->
           <div slot="card" class="aspect-[340/491] w-[340px] max-w-full">

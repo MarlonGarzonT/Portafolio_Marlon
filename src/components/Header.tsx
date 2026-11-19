@@ -118,7 +118,7 @@ export default function Header({ navLabel, items, lang }: HeaderProps) {
         >
           <Glass component="div" colors={NAV_GLASS} className={`chrome pointer-events-auto w-full max-w-[420px] rounded-full p-1.5 ${NAV_BLUR}`}>
             <LayoutGroup>
-              <ul className="grid grid-cols-4">
+              <ul className="grid" style={{ gridTemplateColumns: `repeat(${items.length}, minmax(0, 1fr))` }}>
                 {items.map((item) => {
                   const isActive = active === item.id;
                   return (

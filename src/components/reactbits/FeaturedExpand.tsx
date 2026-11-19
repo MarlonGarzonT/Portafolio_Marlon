@@ -94,7 +94,7 @@ export default function FeaturedExpand({ src, srcPortrait, alt, title, hint, chi
       mediaZoom={1.25}
       // Punto focal en los teléfonos: a la derecha en la portada horizontal, arriba en la vertical.
       focusX={portrait ? 50 : 66}
-      focusY={portrait ? 38 : 50}
+      focusY={portrait ? 38 : 42}
       scrollDistance={SCROLL}
       holdDistance={HOLD}
       smoothing={0.08}
