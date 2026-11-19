@@ -28,3 +28,6 @@ pnpm-debug.log*
 
 # Hoja de vida local (incluye datos personales como el teléfono): no se publica
 /*.pdf
+
+# Imágenes para publicar en redes (material de trabajo, no se versiona)
+/publicacion-linkedin/
