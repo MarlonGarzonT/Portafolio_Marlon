@@ -12,3 +12,4 @@ export { default as Sparkles } from 'framework7-icons/react/esm/Sparkles.js';
 export { default as ArrowUpRight } from 'framework7-icons/react/esm/ArrowUpRight.js';
 export { default as DocOnDoc } from 'framework7-icons/react/esm/DocOnDoc.js';
 export { default as Checkmark } from 'framework7-icons/react/esm/Checkmark.js';
+export { default as Wrench } from 'framework7-icons/react/esm/Wrench.js';

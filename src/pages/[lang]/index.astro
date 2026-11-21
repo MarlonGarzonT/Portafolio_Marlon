@@ -6,6 +6,7 @@ import Header from '../../components/Header.tsx';
 import Hero from '../../components/Hero.tsx';
 import HeroActions from '../../components/HeroActions.tsx';
 import Experience from '../../components/Experience.tsx';
+import Services from '../../components/Services.tsx';
 import About from '../../components/About.tsx';
 import Contact from '../../components/Contact.tsx';
 import ContactCards from '../../components/ContactCards.tsx';
@@ -15,7 +16,6 @@ import EdgeBlur from '../../components/reactbits/EdgeBlur.tsx';
 import FeaturedExpand from '../../components/reactbits/FeaturedExpand.tsx';
 import portadaMiCuadre from '../../assets/proyectos/mi-cuadre-demo.webp';
 import portadaMiCuadreMovil from '../../assets/proyectos/mi-cuadre-demo-movil.webp';
-import DecryptedText from '../../components/reactbits/DecryptedText.tsx';
 import AboutCard from '../../components/reactbits/AboutCard.tsx';
 import { locales, useTranslations, otherLocale, htmlLang, type Locale } from '../../i18n/ui';
 import { profile, projects } from '../../data/profile';
@@ -53,6 +53,7 @@ const [portada, portadaMovil] = await Promise.all([
 
 const sections = [
   { id: 'experiencia', label: t('nav.experience') },
+  { id: 'servicios', label: t('nav.services') },
   { id: 'sobre-mi', label: t('nav.about') },
   { id: 'contacto', label: t('nav.contact') },
 ];
@@ -91,19 +92,6 @@ const sections = [
       <section class="hero-collapse relative pt-20 pb-16 md:pt-40 md:pb-28" aria-labelledby="hero-title">
         <div class="relative z-[1]">
           <Hero locale={locale} t={t} avatar={avatar}>
-            <DecryptedText
-              slot="name"
-              client:load
-              text={profile.firstName}
-              animateOn="view"
-              sequential
-              revealDirection="start"
-              speed={45}
-              maxIterations={14}
-              characters="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789<>/{}#$"
-              className="text-primary"
-              encryptedClassName="text-primary/45"
-            />
             <HeroActions
               slot="actions"
               client:idle
@@ -168,6 +156,7 @@ const sections = [
     <noscript><style is:inline>#destacado { display: none; }</style></noscript>
 
     <div class="mx-auto mt-20 max-w-3xl space-y-20 md:mt-24 md:space-y-24">
+      <section id="servicios" aria-labelledby="servicios-title" data-reveal><Services locale={locale} t={t} /></section>
       <section id="sobre-mi" aria-labelledby="sobre-mi-title" data-reveal><About locale={locale} t={t}>
           <!-- Espacio reservado con la proporción real de la tarjeta (alto = 1,444 × ancho): sin saltos al cargar. -->
           <div slot="card" class="aspect-[340/491] w-[340px] max-w-full">
@@ -179,8 +168,6 @@ const sections = [
               title={profile.role[locale]}
               handle="MarlonGarzonT"
               status={t('about.status')}
-              contactText={t('contact.email')}
-              email={profile.email}
             />
           </div>
         </About></section>

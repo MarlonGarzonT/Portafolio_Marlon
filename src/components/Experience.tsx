@@ -17,7 +17,7 @@ export default function Experience({ locale, t }: { locale: Locale; t: Translato
       <List dividersIos className="list-full-text my-0!">
         {experience.map((job) => (
           <ListItem
-            key={`${job.company}-${job.start}`}
+            key={`${job.company}-${job.start.es}`}
             media={
               <SettingsIcon color="var(--color-ios-gray)">
                 <Briefcase />
@@ -26,8 +26,8 @@ export default function Experience({ locale, t }: { locale: Locale; t: Translato
             title={<span className="font-semibold">{job.role[locale]}</span>}
             after={
               <span className="text-[15px] tabular-nums">
-                {/* Un solo año si empezó y terminó el mismo año ("2024", no "2024 – 2024"). */}
-                {job.end === job.start ? job.start : `${job.start} – ${job.end ?? t('experience.present')}`}
+                {/* Una sola fecha si empezó y terminó en el mismo punto ("2024", no "2024 – 2024"). */}
+                {job.end?.[locale] === job.start[locale] ? job.start[locale] : `${job.start[locale]} – ${job.end?.[locale] ?? t('experience.present')}`}
               </span>
             }
             subtitle={job.company}

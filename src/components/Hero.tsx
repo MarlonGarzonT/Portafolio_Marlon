@@ -9,8 +9,6 @@ interface Props {
   t: Translator;
   /** Avatar optimizado por Astro (src + srcset). */
   avatar: { src: string; srcSet: string };
-  /** Nombre animado (isla DecryptedText que pasa Astro como slot "name"). */
-  name?: ReactNode;
   /** Botones de acción (isla HeroActions con React Bits que pasa Astro como slot "actions"). */
   actions?: ReactNode;
 }
@@ -19,7 +17,7 @@ interface Props {
  * Inicio: avatar + estado, saludo, presentación y acciones (estructura de porfolio.dev), sobre un
  * panel de Liquid Glass (`GlassPanel`) para que el texto se lea sobre el fondo animado.
  */
-export default function Hero({ locale, t, avatar, name, actions }: Props) {
+export default function Hero({ locale, t, avatar, actions }: Props) {
   return (
     <Ios>
       <GlassPanel className="mx-4 max-w-[40rem] p-5 sm:p-8">
@@ -49,7 +47,7 @@ export default function Hero({ locale, t, avatar, name, actions }: Props) {
         </div>
 
         <h1 className="enter text-[40px] font-bold leading-[1.05] tracking-display sm:text-[52px]" style={{ ['--i' as string]: 1 }}>
-          {t('hero.greeting')} <span className="text-primary">{name ?? profile.firstName}</span>
+          {t('hero.greeting')} <span className="text-primary">{profile.firstName}</span>
         </h1>
 
         <p className="enter mt-5 text-[19px] leading-[1.55] text-black/70 dark:text-white/70" style={{ ['--i' as string]: 2 }}>

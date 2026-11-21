@@ -2,7 +2,7 @@ import { useEffect, useState, type ReactNode } from 'react';
 import { Glass } from 'konsta/react';
 import { LayoutGroup, MotionConfig, motion } from 'motion/react';
 import Ios from './ios/Ios';
-import { Briefcase, CodeIcon, Envelope, Person } from './ios/icons';
+import { Briefcase, CodeIcon, Envelope, Person, Wrench } from './ios/icons';
 
 export interface HeaderProps {
   navLabel: string;
@@ -13,6 +13,7 @@ export interface HeaderProps {
 const ICONS: Record<string, ReactNode> = {
   experiencia: <Briefcase />,
   proyectos: <CodeIcon />,
+  servicios: <Wrench />,
   'sobre-mi': <Person />,
   contacto: <Envelope />,
 };

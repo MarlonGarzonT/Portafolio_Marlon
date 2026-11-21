@@ -5,6 +5,7 @@
 import type { ComponentType, SVGProps } from 'react';
 import type { ImageMetadata } from 'astro';
 import CameraViewfinder from 'framework7-icons/react/esm/CameraViewfinder.js';
+import Wrench from 'framework7-icons/react/esm/Wrench.js';
 import { DatabaseGlyph } from '../components/ios/glyphs';
 import type { Localized } from '../i18n/ui';
 import type { BrandKey } from '../lib/brands';
@@ -13,9 +14,9 @@ import fotoPrincipal from '../assets/marlon-avatar.jpg';
 import iconoMiCuadre from '../assets/proyectos/mi-cuadre.png';
 
 export interface Job {
-  start: string;
+  start: Localized;
   /** `null` = trabajo actual. Igual a `start` si duró menos de un año (se muestra un solo año). */
-  end: string | null;
+  end: Localized | null;
   company: string;
   role: Localized;
   summary: Localized;
@@ -43,6 +44,15 @@ export interface Project {
   inProgress?: boolean;
 }
 
+export interface Service {
+  slug: string;
+  title: Localized;
+  summary: Localized;
+  deliverables: Localized<string[]>;
+  glyph: ComponentType<SVGProps<SVGSVGElement>>;
+  tint: [string, string];
+}
+
 export interface SkillGroup {
   title: Localized;
   /** `name` traducible para lo que cambia por idioma (p. ej. los idiomas). */
@@ -57,10 +67,10 @@ export const profile = {
   /** Retrato recortado sin fondo: lo necesita la tarjeta holográfica de "Sobre mí". */
   photo: retrato as ImageMetadata,
   available: true,
-  role: { es: 'Desarrollador de Software', en: 'Software Developer' } satisfies Localized,
+  role: { es: 'Desarrollador web con React, TypeScript y Supabase', en: 'Web developer with React, TypeScript and Supabase' } satisfies Localized,
   intro: {
-    es: 'en Bogotá, Colombia. Hoy lidero la automatización de servicio al cliente en AGP, con experiencia previa construyendo soluciones para los sectores financiero y de recursos humanos: integraciones, bases de datos complejas y arquitecturas seguras.',
-    en: 'based in Bogotá, Colombia. I currently lead customer service automation at AGP, with prior experience building solutions for the financial and HR sectors: integrations, complex databases and secure architectures.',
+    es: 'Convierto hojas de cálculo y procesos manuales en apps web. Con base en Bogotá, Colombia, desarrollo la automatización de servicio al cliente en AGP, con experiencia previa construyendo soluciones para los sectores financiero y de recursos humanos: integraciones, bases de datos complejas y arquitecturas seguras.',
+    en: 'I turn spreadsheets and manual processes into web apps. Based in Bogotá, Colombia, I build customer service automation at AGP, with prior experience creating solutions for the financial and HR sectors: integrations, complex databases and secure architectures.',
   } satisfies Localized,
   email: 'marlonarley2014@gmail.com',
   socials: {
@@ -69,15 +79,15 @@ export const profile = {
   },
   seo: {
     description: {
-      es: 'Portafolio de Marlon Garzón, desarrollador de software en Bogotá. Automatización de procesos y soluciones para los sectores financiero y de recursos humanos.',
-      en: 'Portfolio of Marlon Garzón, software developer in Bogotá. Process automation and solutions for the financial and HR sectors.',
+      es: 'Marlon Garzón, desarrollador web en Bogotá. Construyo apps con React, TypeScript y Supabase: convierto hojas de cálculo y procesos manuales en software real.',
+      en: 'Marlon Garzón, web developer in Bogotá. I build apps with React, TypeScript and Supabase: turning spreadsheets and manual processes into real software.',
     } satisfies Localized,
   },
 };
 
 export const experience: Job[] = [
   {
-    start: '2026', // desde el 6 de julio de 2026
+    start: { es: 'jul. 2026', en: 'Jul 2026' },
     end: null,
     company: 'AGP',
     role: { es: 'Desarrollador Junior', en: 'Junior Developer' },
@@ -87,23 +97,19 @@ export const experience: Job[] = [
     },
     highlights: {
       es: [
-        'Lidero el proyecto de automatización de SAC (Servicio al Cliente).',
-        'Gestiono bases de datos en Azure SQL y programo su lógica en PL/SQL, como triggers.',
-        'Desarrollo con Python y React, usando librerías y componentes.',
-        'Doy mantenimiento al software existente de la compañía.',
+        'Desarrollo el proyecto de automatización de SAC (Servicio al Cliente) con Python y React, reduciendo tareas manuales del equipo.',
+        'Gestiono las bases de datos en Azure SQL y programo su lógica en PL/SQL (triggers), dando mantenimiento al software existente de la compañía.',
       ],
       en: [
-        'I lead the Customer Service (SAC) automation project.',
-        'I manage Azure SQL databases and write their logic in PL/SQL, such as triggers.',
-        'I build with Python and React, using libraries and components.',
-        'I maintain the company’s existing software.',
+        'I build the Customer Service (SAC) automation project with Python and React, cutting down the team’s manual work.',
+        'I manage the Azure SQL databases and write their logic in PL/SQL (triggers), maintaining the company’s existing software.',
       ],
     },
     stack: ['Python', 'React', 'Azure SQL', 'PL/SQL'],
   },
   {
-    start: '2025',
-    end: '2026', // hasta junio de 2026
+    start: { es: '2025', en: '2025' },
+    end: { es: 'jun. 2026', en: 'Jun 2026' },
     company: 'E.B.S. Enterprise Business Solutions',
     role: { es: 'Constructor Junior Multiplataforma', en: 'Junior Cross-platform Developer' },
     summary: {
@@ -112,21 +118,19 @@ export const experience: Job[] = [
     },
     highlights: {
       es: [
-        'Diseñé y documenté el modelo automatizado de evaluación financiera para las solicitudes de crédito de Fundación Coomeva.',
-        'Integré sistemas legados con arquitecturas modernas consumiendo servicios SOAP (XML) y API REST (JSON).',
-        'Implementé flujos de trabajo con IA (Claude) para automatizar la documentación técnica y optimizar procesos internos.',
+        'Diseñé y documenté el modelo automatizado de evaluación financiera para las solicitudes de crédito de Fundación Coomeva, agilizando el análisis.',
+        'Integré sistemas legados con arquitecturas modernas consumiendo servicios SOAP (XML) y API REST (JSON), sin reescribir el software existente.',
       ],
       en: [
-        'Designed and documented the automated financial assessment model for Fundación Coomeva’s credit applications.',
-        'Integrated legacy systems with modern architectures by consuming SOAP (XML) services and REST (JSON) APIs.',
-        'Built AI workflows (Claude) to automate technical documentation and streamline internal processes.',
+        'Designed and documented the automated financial assessment model for Fundación Coomeva’s credit applications, speeding up the review.',
+        'Integrated legacy systems with modern architectures by consuming SOAP (XML) services and REST (JSON) APIs, without rewriting the existing software.',
       ],
     },
     stack: ['Java', 'Node.js', 'Angular', 'TypeScript', 'JavaScript', 'PHP', 'Gupta Team Developer', 'Oracle (PL/SQL)', 'SQL Server', 'Git'],
   },
   {
-    start: '2024',
-    end: '2024',
+    start: { es: '2024', en: '2024' },
+    end: { es: '2024', en: '2024' },
     company: 'Sodexo',
     role: { es: 'Practicante de Desarrollo de Software', en: 'Software Development Intern' },
     summary: {
@@ -134,14 +138,14 @@ export const experience: Job[] = [
       en: 'Payroll project: an end-to-end performance review system for human resources.',
     },
     highlights: {
-      es: ['Desarrollé el módulo de evaluación full-stack en Velneo V7, que soporta la gestión de recursos humanos de más de 8.000 empleados a nivel nacional.'],
-      en: ['Built the full-stack evaluation module in Velneo V7, supporting HR management for more than 8,000 employees nationwide.'],
+      es: ['Desarrollé el módulo de evaluación de desempeño full-stack en Velneo V7 para el área de recursos humanos.'],
+      en: ['Built the full-stack performance-review module in Velneo V7 for the HR department.'],
     },
     stack: ['Velneo V7'],
   },
   {
-    start: '2023',
-    end: '2023',
+    start: { es: '2023', en: '2023' },
+    end: { es: '2023', en: '2023' },
     company: 'Pinturas La Mansión',
     role: { es: 'Desarrollador de Software Junior', en: 'Junior Software Developer' },
     summary: {
@@ -150,23 +154,12 @@ export const experience: Job[] = [
     },
     highlights: {
       es: [
-        'Optimicé la gestión operativa y el procesamiento de transacciones.',
+        'Optimicé la gestión operativa y el procesamiento de transacciones del sistema de facturación.',
         'Desarrollé arquitecturas CRUD robustas en C# y .NET, con un flujo de datos eficiente y seguro.',
       ],
-      en: ['Improved operational management and transaction processing.', 'Built robust CRUD architectures in C# and .NET with an efficient, secure data flow.'],
+      en: ['Improved operational management and transaction processing for the billing system.', 'Built robust CRUD architectures in C# and .NET with an efficient, secure data flow.'],
     },
     stack: ['C#', '.NET', 'Oracle (PL/SQL)', 'SQL Server'],
-  },
-  {
-    start: '2023',
-    end: '2023',
-    company: 'Pear Solutions',
-    role: { es: 'Técnico de Sistemas', en: 'IT Technician' },
-    summary: {
-      es: 'Mantenimiento preventivo y correctivo y soporte técnico de primer nivel en equipos de hardware y redes.',
-      en: 'Preventive and corrective maintenance and first-level technical support for hardware and networks.',
-    },
-    highlights: { es: [], en: [] },
   },
 ];
 
@@ -229,12 +222,9 @@ export interface FeaturedSkill {
  */
 export const featuredSkills: FeaturedSkill[] = [
   { name: 'SQL · PL/SQL', glyph: DatabaseGlyph, color: '#FF9F0A', where: { es: 'AGP · E.B.S. · La Mansión', en: 'AGP · E.B.S. · La Mansión' } },
-  { name: 'React', icon: 'siReact', color: '#61DAFB', where: { es: 'AGP · Mi Cuadre · 2 proyectos más', en: 'AGP · Mi Cuadre · 2 more projects' } },
+  { name: 'React', icon: 'siReact', color: '#61DAFB', where: { es: 'AGP · Mi Cuadre · Portafolio', en: 'AGP · Mi Cuadre · Portfolio' } },
   { name: 'Python', icon: 'siPython', color: '#FFD43B', where: { es: 'AGP (actual)', en: 'AGP (current)' } },
-  // Simple Icons no incluye Java (marca de Oracle): se usa el logo de OpenJDK, con el naranja de Java.
-  { name: 'Java', icon: 'siOpenjdk', color: '#F89820', where: { es: 'E.B.S.', en: 'E.B.S.' } },
   { name: 'TypeScript', icon: 'siTypescript', color: '#5BA3F5', where: { es: 'E.B.S. · Mi Cuadre', en: 'E.B.S. · Mi Cuadre' } },
-  { name: 'C# · .NET', icon: 'siDotnet', color: '#9B7BFF', where: { es: 'Pinturas La Mansión', en: 'Pinturas La Mansión' } },
 ];
 
 /** El resto del stack, de más a menos usado dentro de cada grupo. */
@@ -242,24 +232,17 @@ export const skillGroups: SkillGroup[] = [
   {
     title: { es: 'También trabajo con', en: 'Also worked with' },
     items: [
-      { name: 'Angular', icon: 'siAngular' },
       { name: 'Node.js', icon: 'siNodedotjs' },
       { name: 'JavaScript', icon: 'siJavascript' },
-      { name: 'PHP', icon: 'siPhp' },
-      { name: 'Vue.js', icon: 'siVuedotjs' },
     ],
   },
   {
     title: { es: 'Bases de datos', en: 'Databases' },
-    items: [{ name: 'Azure SQL' }, { name: 'Oracle Database' }, { name: 'SQL Server' }, { name: 'Supabase', icon: 'siSupabase' }],
+    items: [{ name: 'Supabase', icon: 'siSupabase' }],
   },
   {
     title: { es: 'Integraciones', en: 'Integrations' },
     items: [{ name: 'REST' }, { name: 'SOAP' }, { name: 'JSON', icon: 'siJson' }, { name: 'XML', icon: 'siXml' }],
-  },
-  {
-    title: { es: 'Entornos empresariales', en: 'Enterprise platforms' },
-    items: [{ name: 'Gupta Team Developer' }, { name: 'Velneo V7' }],
   },
   {
     title: { es: 'Control de versiones', en: 'Version control' },
@@ -274,15 +257,64 @@ export const skillGroups: SkillGroup[] = [
   },
 ];
 
+/**
+ * Servicios como freelance. Precios orientativos ("Desde X USD"): borrador para que Marlon
+ * ajuste los montos según cada caso antes de publicar.
+ */
+export const services: Service[] = [
+  {
+    slug: 'hoja-a-app',
+    title: { es: 'De hoja de cálculo a app', en: 'Spreadsheet to app' },
+    summary: {
+      es: 'Migro tu Excel o tus procesos manuales a una app web simple, con una base de datos real detrás.',
+      en: 'I migrate your Excel sheet or manual process to a simple web app, backed by a real database.',
+    },
+    deliverables: {
+      es: ['App web a la medida de tu proceso actual', 'Base de datos en Supabase (Postgres)', 'Capacitación de 1 hora para tu equipo'],
+      en: ['Web app built around your current process', 'Database on Supabase (Postgres)', '1-hour training session for your team'],
+    },
+    glyph: Wrench,
+    tint: ['#30B0C7', '#1a6e7a'],
+  },
+  {
+    slug: 'landing-captura',
+    title: { es: 'Landing con captura de datos', en: 'Landing page with lead capture' },
+    summary: {
+      es: 'Una página de aterrizaje rápida y clara, con un formulario que guarda cada contacto en una base de datos.',
+      en: 'A fast, clear landing page with a form that saves every contact to a database.',
+    },
+    deliverables: {
+      es: ['Landing responsiva de una sola página', 'Formulario conectado a base de datos', 'Dominio y despliegue incluidos'],
+      en: ['Responsive one-page landing', 'Form wired to a database', 'Domain and deployment included'],
+    },
+    glyph: Wrench,
+    tint: ['#0A84FF', '#0a4c8f'],
+  },
+  {
+    slug: 'bolsa-arreglos',
+    title: { es: 'Bolsa de arreglos', en: 'Hours bundle' },
+    summary: {
+      es: 'Un bloque de horas para arreglar errores, hacer ajustes pequeños o dar mantenimiento a un sitio o app que ya tienes.',
+      en: 'A block of hours to fix bugs, make small tweaks, or maintain a site or app you already have.',
+    },
+    deliverables: {
+      es: ['Bloque de horas de desarrollo', 'Reporte de lo que se hizo en cada arreglo', 'Sin permanencia: se usa cuando lo necesitas'],
+      en: ['Development hours block', 'Report of what was done on each fix', 'No subscription: use it whenever you need it'],
+    },
+    glyph: Wrench,
+    tint: ['#5E5CE6', '#34339e'],
+  },
+];
+
 export const about = {
   es: [
-    'Soy desarrollador multiplataforma y estudio Ingeniería de Sistemas y Desarrollo de Software en la Institución Universitaria de Colombia (grado esperado en 2026). Llevo más de un año diseñando e implementando soluciones para los sectores financiero y de recursos humanos, y hoy lidero la automatización de servicio al cliente en AGP.',
-    'Me enfoco en optimizar procesos, manejar bases de datos complejas y construir arquitecturas seguras e íntegras: desde modelos de evaluación de crédito e integraciones SOAP y REST con sistemas legados hasta módulos de recursos humanos para más de 8.000 empleados.',
-    'Hablo inglés a nivel B2 y uso la IA para automatizar documentación y procesos de desarrollo. Fuera del código juego voleibol: fui campeón de la Liga Arena masculina en 2023.',
+    'Construyo apps web y automatizo procesos con React, TypeScript, Node.js y Supabase.',
+    'Trabajo con negocios y equipos pequeños que quieren dejar atrás las hojas de cálculo y los procesos manuales, desde modelos de evaluación de crédito hasta módulos de recursos humanos.',
+    'Hablo inglés B2 y trabajo en huso horario UTC-5 (Bogotá, Colombia).',
   ],
   en: [
-    'I’m a cross-platform developer studying Systems Engineering and Software Development at Institución Universitaria de Colombia (expected graduation: 2026). For more than a year I’ve been designing and building solutions for the financial and HR sectors, and I currently lead customer service automation at AGP.',
-    'I focus on streamlining processes, handling complex databases and building secure, reliable architectures: from credit assessment models and SOAP and REST integrations with legacy systems to HR modules for more than 8,000 employees.',
-    'I speak English at a B2 level and use AI to automate documentation and development workflows. Away from code I play volleyball: I won the men’s Liga Arena in 2023.',
+    'I build web apps and automate processes with React, TypeScript, Node.js and Supabase.',
+    'I work with small businesses and teams who want to move past spreadsheets and manual processes, from credit assessment models to HR modules.',
+    'I speak English at a B2 level and work in the UTC-5 timezone (Bogotá, Colombia).',
   ],
 } satisfies Localized<string[]>;
